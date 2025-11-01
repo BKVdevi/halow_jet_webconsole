@@ -1,526 +1,1024 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/png" href="/images/logo/jet.png">
-  <title>JET 1.0 - Системный мониторинг</title>
-  <!-- Подключение jQuery -->
-  <script src="/scripts/jquery-3.6.0.min.js"></script>
-  <!-- Подключение Chart.js -->
-  <script src="/scripts/chart.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      background-color: #f5f5f5;
-    }
-    .chart-container {
-      position: relative;
-      height: 300px;
-      margin-top: 20px;
-      padding: 15px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      background-color: #fff;
-    }
-    .system-metrics {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin: 20px 0;
-    }
-    .metric-card {
-      padding: 15px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      background-color: #fff;
-      text-align: center;
-    }
-    .metric-value {
-      font-size: 24px;
-      font-weight: bold;
-      color: #2c5aa0;
-    }
-    .metric-label {
-      font-size: 14px;
-      color: #666;
-      margin-top: 5px;
-    }
-    .frequency-display {
-      font-size: 18px;
-      font-weight: bold;
-      color: #2c5aa0;
-      margin: 10px 0;
-    }
-    .controls {
-      margin: 15px 0;
-      padding: 10px;
-      background-color: #f0f0f0;
-      border-radius: 5px;
-    }
-    .btn {
-      padding: 8px 16px;
-      margin: 5px;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-    }
-    .btn-start {
-      background-color: #28a745;
-      color: white;
-    }
-    .btn-stop {
-      background-color: #dc3545;
-      color: white;
-    }
-    .connection-status {
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-      font-weight: bold;
-    }
-    .status-connected {
-      background-color: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
-    .status-disconnected {
-      background-color: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
-    .status-reconnecting {
-      background-color: #fff3cd;
-      color: #856404;
-      border: 1px solid #ffeaa7;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System & Modbus Control Panel</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1em;
+        }
+
+        .status-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .status-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-item label {
+            font-weight: bold;
+            color: #667eea;
+            display: block;
+            font-size: 0.8em;
+            margin-bottom: 5px;
+        }
+
+        .status-item .value {
+            font-size: 1.2em;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .status-item .unit {
+            font-size: 0.8em;
+            color: #999;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 12px 25px;
+            background: #f0f0f0;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            color: #666;
+            transition: all 0.3s ease;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .tab-button:hover {
+            background: #e0e0e0;
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e0e0e0;
+            position: relative;
+            min-height: 350px;
+        }
+
+        .chart-container h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            text-align: center;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+
+        .channels-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #667eea;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .channels-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .channels-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: bold;
+        }
+
+        .channels-table th {
+            padding: 18px;
+            text-align: left;
+            font-size: 0.95em;
+        }
+
+        .channels-table td {
+            padding: 18px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .channels-table tbody tr:hover {
+            background: #f5f5f5;
+            transition: background 0.2s ease;
+        }
+
+        .channels-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .channel-name {
+            font-weight: bold;
+            color: #667eea;
+            min-width: 80px;
+        }
+
+        .channel-value {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #333;
+            min-width: 60px;
+        }
+
+        .value-positive {
+            color: #27ae60;
+        }
+
+        .value-negative {
+            color: #e74c3c;
+        }
+
+        .value-zero {
+            color: #95a5a6;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .slider {
+            flex: 1;
+            height: 8px;
+            border-radius: 5px;
+            background: #e0e0e0;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: box-shadow 0.2s ease;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: box-shadow 0.2s ease;
+        }
+
+        .slider::-moz-range-thumb:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .slider-value {
+            display: inline-block;
+            min-width: 50px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9em;
+            color: #667eea;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            min-width: 180px;
+        }
+
+        .input-container input {
+            width: 70px;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.95em;
+            text-align: center;
+            transition: border-color 0.2s ease;
+        }
+
+        .input-container input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-container input::-webkit-outer-spin-button,
+        .input-container input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .input-container input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        .btn-set {
+            padding: 10px 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9em;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            white-space: nowrap;
+        }
+
+        .btn-set:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-set:active {
+            transform: translateY(0);
+        }
+
+        .feedback-message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+            animation: slideIn 0.3s ease;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            min-width: 300px;
+        }
+
+        .feedback-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+            display: block;
+        }
+
+        .feedback-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(400px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .channels-table {
+                font-size: 0.9em;
+            }
+
+            .channels-table th,
+            .channels-table td {
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .status-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .channels-table {
+                font-size: 0.8em;
+            }
+
+            .channels-table th,
+            .channels-table td {
+                padding: 8px;
+            }
+
+            .slider-container {
+                min-width: 100px;
+            }
+
+            .input-container {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .input-container input {
+                width: 100%;
+            }
+
+            .btn-set {
+                width: 100%;
+            }
+
+            .tabs {
+                gap: 5px;
+            }
+
+            .tab-button {
+                padding: 10px 15px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
 </head>
-
 <body>
-  <h1>🖥️ Системный мониторинг JET 1.0</h1>
-  <div height="64" width="192" style="border-radius: 8px; padding: 16; background-color: rgb(73, 53, 147); height: 32; width: 180;">
-  </div>
+    <div class="container">
+        <div class="header">
+            <h1>🎛️ System & Modbus Control Panel</h1>
+            <p>Real-time monitoring and control system</p>
+        </div>
 
-  <!-- Статус соединения -->
-  <div id="connection-status" class="connection-status status-disconnected">
-    🔴 Соединение не установлено
-  </div>
+        <div class="tabs">
+            <button class="tab-button active" data-tab="system">📊 System Metrics</button>
+            <button class="tab-button" data-tab="modbus">🔧 Modbus Channels</button>
+        </div>
 
-  <!-- Элементы управления -->
-  <div class="controls">
-    <button id="start-btn" class="btn btn-start">Запустить мониторинг</button>
-    <button id="stop-btn" class="btn btn-stop">Остановить мониторинг</button>
-    <span style="margin-left: 20px;"><strong>Статус мониторинга:</strong> <span id="monitoring-status">Остановлен</span></span>
-  </div>
+        <!-- System Metrics Tab -->
+        <div id="system" class="tab-content active">
+            <div class="status-bar">
+                <div class="status-item">
+                    <label>CPU Usage</label>
+                    <div class="value" id="cpuPercent">-<span class="unit">%</span></div>
+                </div>
+                <div class="status-item">
+                    <label>Memory Usage</label>
+                    <div class="value" id="memoryPercent">-<span class="unit">%</span></div>
+                </div>
+                <div class="status-item">
+                    <label>Memory (Used/Total)</label>
+                    <div class="value" id="memoryUsed">-<span class="unit">GB</span></div>
+                </div>
+                <div class="status-item">
+                    <label>Swap Usage</label>
+                    <div class="value" id="swapPercent">-<span class="unit">%</span></div>
+                </div>
+                <div class="status-item">
+                    <label>CPU Temperature</label>
+                    <div class="value" id="cpuTemp">-<span class="unit">°C</span></div>
+                </div>
+                <div class="status-item">
+                    <label>Last Update</label>
+                    <div class="value" id="lastUpdate">-</div>
+                </div>
+                <div class="status-item">
+                    <label>Connection Status</label>
+                    <div class="value" id="connectionStatus">🔴 Offline</div>
+                </div>
+                <div class="status-item">
+                    <label>Requests</label>
+                    <div class="value" id="requestCount">0</div>
+                </div>
+            </div>
 
-  <!-- Системные метрики -->
-  <div class="system-metrics">
-    <div class="metric-card">
-      <div class="metric-value" id="cpu-percent">0%</div>
-      <div class="metric-label">Загрузка ЦП</div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-value" id="memory-percent">0%</div>
-      <div class="metric-label">Использование ОЗУ</div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-value" id="memory-used">0 GB</div>
-      <div class="metric-label">Занято ОЗУ</div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-value" id="swap-percent">0%</div>
-      <div class="metric-label">Использование SWAP</div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-value" id="cpu-temp">0°C</div>
-      <div class="metric-label">Температура ЦП</div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-value" id="request-frequency">0.0</div>
-      <div class="metric-label">Частота запросов/сек</div>
-    </div>
-  </div>
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>CPU Usage History</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="cpuChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>Memory Usage History</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="memoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-  <!-- Блок для вывода данных -->
-  <div id="data" style="margin-top: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 5px; background-color: #fff;">
-    <h3>Детальная информация:</h3>
-    <p><strong>param1:</strong> <span id="param1-value">-</span></p>
-    <p><strong>param2:</strong> <span id="param2-value">-</span></p>
-    <p><strong>Статус:</strong> <span id="status">Ожидание запуска...</span></p>
-    <p><strong>Последнее обновление сервера:</strong> <span id="server-update">-</span></p>
-    <p><strong>Последнее обновление клиента:</strong> <span id="last-update">-</span></p>
-    
-    <!-- Блок для отображения сетевых метрик -->
-    <div class="frequency-display">
-      <p><strong>Общее количество запросов:</strong> <span id="total-requests">0</span></p>
-      <p><strong>Среднее время ответа:</strong> <span id="avg-response-time">0</span> мс</p>
-      <p><strong>Последовательные ошибки:</strong> <span id="consecutive-errors">0</span></p>
-      <p><strong>Успешных запросов:</strong> <span id="successful-requests">0</span></p>
+        <!-- Modbus Channels Tab -->
+        <div id="modbus" class="tab-content">
+            <div class="status-bar">
+                <div class="status-item">
+                    <label>Modbus Status</label>
+                    <div class="value" id="modbusStatus">🔴 Offline</div>
+                </div>
+                <div class="status-item">
+                    <label>Last Update</label>
+                    <div class="value" id="modbusLastUpdate">-</div>
+                </div>
+                <div class="status-item">
+                    <label>Modbus Requests</label>
+                    <div class="value" id="modbusRequestCount">0</div>
+                </div>
+                <div class="status-item">
+                    <label>Modbus Errors</label>
+                    <div class="value" id="modbusErrorCount">0</div>
+                </div>
+            </div>
+
+            <div class="channels-section">
+                <h2 class="section-title">Channel Control</h2>
+                <table class="channels-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">Channel</th>
+                            <th style="width: 80px;">Value</th>
+                            <th>Slider</th>
+                            <th style="width: 180px;">Direct Input</th>
+                        </tr>
+                    </thead>
+                    <tbody id="channelsTableBody">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="feedback-message" id="feedbackMessage"></div>
+        </div>
     </div>
-  </div>
 
-  <!-- График частоты запросов -->
-  <div class="chart-container">
-    <h3>График частоты запросов</h3>
-    <canvas id="frequencyChart"></canvas>
-  </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script>
+        // Configuration
+        const API_URL = 'http://localhost:8081';
+        const SYSTEM_REFRESH_INTERVAL = 1000; // ms
+        const MODBUS_REFRESH_INTERVAL = 500; // ms
+        const SLIDER_DEBOUNCE = 100; // ms
+        const MAX_CHART_POINTS = 60;
 
-  <!-- График системных метрик -->
-  <div class="chart-container">
-    <h3>График системных метрик</h3>
-    <canvas id="systemChart"></canvas>
-  </div>
+        // State
+        let systemData = {};
+        let channelsData = {};
+        let sliderTimeouts = {};
+        let systemRequestCount = 0;
+        let modbusRequestCount = 0;
+        let modbusErrorCount = 0;
+        let isSystemConnected = false;
+        let isModbusConnected = false;
 
-  <script>
-    $(document).ready(function() {
-      
-      // Переменные для управления запросами
-      let isMonitoringActive = false;
-      let isRequestInProgress = false;
-      
-      // Переменные для отслеживания частоты запросов
-      let requestTimes = [];
-      let responseTimes = [];
-      let totalRequests = 0;
-      let successfulRequests = 0;
-      let consecutiveErrors = 0;
-      let currentFrequency = 0;
-      let connectionState = 'disconnected';
-      
-      // Данные для графиков
-      let chartData = {
-        labels: [],
-        frequencies: []
-      };
-      
-      let systemChartData = {
-        labels: [],
-        cpu: [],
-        memory: [],
-        temp: []
-      };
-      
-      // Инициализация графика частоты запросов
-      const ctx1 = document.getElementById('frequencyChart').getContext('2d');
-      const frequencyChart = new Chart(ctx1, {
-        type: 'line',
-        data: {
-          labels: chartData.labels,
-          datasets: [{
-            label: 'Частота запросов (запросов/сек)',
-            data: chartData.frequencies,
-            borderColor: 'rgb(75, 192, 192)',
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            fill: true,
-            tension: 0.4
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            x: {
-              display: true,
-              title: { display: true, text: 'Время' }
-            },
-            y: {
-              display: true,
-              title: { display: true, text: 'Запросов/сек' },
-              min: 0
+        // Chart instances
+        let cpuChart = null;
+        let memoryChart = null;
+
+        // Chart data buffers
+        let chartData = {
+            cpu: [],
+            memory: [],
+            timestamps: []
+        };
+
+        /**
+         * Initialize tabs
+         */
+        function initializeTabs() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabName = this.dataset.tab;
+
+                    // Deactivate all tabs
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+
+                    // Activate selected tab
+                    this.classList.add('active');
+                    document.getElementById(tabName).classList.add('active');
+                });
+            });
+        }
+
+        /**
+         * Initialize charts
+         */
+        function initializeCharts() {
+            const chartConfig = {
+                type: 'line',
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: '#667eea',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        filler: true
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                color: '#667eea',
+                                stepSize: 20
+                            },
+                            grid: {
+                                color: 'rgba(102, 126, 234, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#667eea',
+                                maxTicksLimit: 8
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            };
+
+            // CPU Chart
+            cpuChart = new Chart(document.getElementById('cpuChart'), {
+                ...chartConfig,
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'CPU %',
+                        data: [],
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                }
+            });
+
+            // Memory Chart
+            memoryChart = new Chart(document.getElementById('memoryChart'), {
+                ...chartConfig,
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Memory %',
+                        data: [],
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                }
+            });
+        }
+
+        /**
+         * Update charts with new data
+         */
+        function updateCharts(cpuPercent, memoryPercent) {
+            const now = new Date().toLocaleTimeString();
+
+            chartData.cpu.push(cpuPercent);
+            chartData.memory.push(memoryPercent);
+            chartData.timestamps.push(now);
+
+            // Keep only last MAX_CHART_POINTS
+            if (chartData.cpu.length > MAX_CHART_POINTS) {
+                chartData.cpu.shift();
+                chartData.memory.shift();
+                chartData.timestamps.shift();
             }
-          }
-        }
-      });
-      
-      // Инициализация графика системных метрик
-      const ctx2 = document.getElementById('systemChart').getContext('2d');
-      const systemChart = new Chart(ctx2, {
-        type: 'line',
-        data: {
-          labels: systemChartData.labels,
-          datasets: [{
-            label: 'ЦП (%)',
-            data: systemChartData.cpu,
-            borderColor: 'rgb(255, 99, 132)',
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            yAxisID: 'y'
-          }, {
-            label: 'ОЗУ (%)',
-            data: systemChartData.memory,
-            borderColor: 'rgb(54, 162, 235)',
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            yAxisID: 'y'
-          }, {
-            label: 'Температура (°C)',
-            data: systemChartData.temp,
-            borderColor: 'rgb(255, 205, 86)',
-            backgroundColor: 'rgba(255, 205, 86, 0.2)',
-            yAxisID: 'y1'
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: {
-            mode: 'index',
-            intersect: false,
-          },
-          scales: {
-            x: {
-              display: true,
-              title: { display: true, text: 'Время' }
-            },
-            y: {
-              type: 'linear',
-              display: true,
-              position: 'left',
-              title: { display: true, text: 'Проценты (%)' },
-              min: 0,
-              max: 100
-            },
-            y1: {
-              type: 'linear',
-              display: true,
-              position: 'right',
-              title: { display: true, text: 'Температура (°C)' },
-              min: 0,
-              grid: {
-                drawOnChartArea: false,
-              },
-            }
-          }
-        }
-      });
-      
-      // Функция обновления состояния соединения
-      function updateConnectionStatus(state, message) {
-        connectionState = state;
-        const statusDiv = $('#connection-status');
-        
-        switch(state) {
-          case 'connected':
-            statusDiv.removeClass('status-disconnected status-reconnecting')
-                    .addClass('status-connected')
-                    .html('🟢 ' + (message || 'Соединение активно'));
-            break;
-          case 'disconnected':
-            statusDiv.removeClass('status-connected status-reconnecting')
-                    .addClass('status-disconnected')
-                    .html('🔴 ' + (message || 'Соединение потеряно'));
-            break;
-          case 'reconnecting':
-            statusDiv.removeClass('status-connected status-disconnected')
-                    .addClass('status-reconnecting')
-                    .html('🟡 ' + (message || 'Переподключение...'));
-            break;
-        }
-      }
-      
-      // Функция для расчета частоты запросов и среднего времени ответа
-      function calculateMetrics() {
-        const now = Date.now();
-        const oneSecondAgo = now - 1000;
-        
-        // Фильтруем запросы за последнюю секунду
-        const recentRequests = requestTimes.filter(time => time >= oneSecondAgo);
-        currentFrequency = recentRequests.length;
-        
-        // Рассчитываем среднее время ответа
-        let avgResponseTime = 0;
-        if (responseTimes.length > 0) {
-          const sum = responseTimes.reduce((a, b) => a + b, 0);
-          avgResponseTime = Math.round(sum / responseTimes.length);
-        }
-        
-        // Обновляем отображение метрик
-        $('#request-frequency').text(currentFrequency.toFixed(1));
-        $('#total-requests').text(totalRequests);
-        $('#successful-requests').text(successfulRequests);
-        $('#consecutive-errors').text(consecutiveErrors);
-        $('#avg-response-time').text(avgResponseTime);
-        
-        // Очищаем старые данные
-        const sixtySecondsAgo = now - 60000;
-        requestTimes = requestTimes.filter(time => time >= sixtySecondsAgo);
-        
-        if (responseTimes.length > 100) {
-          responseTimes = responseTimes.slice(-100);
-        }
-      }
-      
-      // Функция для обновления графиков
-      function updateCharts() {
-        const now = new Date();
-        const timeLabel = now.getHours().toString().padStart(2, '0') + ':' + 
-                         now.getMinutes().toString().padStart(2, '0') + ':' + 
-                         now.getSeconds().toString().padStart(2, '0');
-        
-        // Обновляем график частоты запросов
-        chartData.labels.push(timeLabel);
-        chartData.frequencies.push(currentFrequency);
-        
-        if (chartData.labels.length > 60) { // 1 минута истории
-          chartData.labels.shift();
-          chartData.frequencies.shift();
-        }
-        
-        frequencyChart.data.labels = [...chartData.labels];
-        frequencyChart.data.datasets[0].data = [...chartData.frequencies];
-        frequencyChart.update('none');
-        
-        // Обновляем график системных метрик (только при активном соединении)
-        if (connectionState === 'connected') {
-          systemChartData.labels.push(timeLabel);
-          
-          // Получаем текущие значения из интерфейса
-          const cpuValue = parseFloat($('#cpu-percent').text()) || 0;
-          const memoryValue = parseFloat($('#memory-percent').text()) || 0;
-          const tempValue = parseFloat($('#cpu-temp').text()) || 0;
-          
-          systemChartData.cpu.push(cpuValue);
-          systemChartData.memory.push(memoryValue);
-          systemChartData.temp.push(tempValue);
-          
-          if (systemChartData.labels.length > 60) { // 1 минута истории
-            systemChartData.labels.shift();
-            systemChartData.cpu.shift();
-            systemChartData.memory.shift();
-            systemChartData.temp.shift();
-          }
-          
-          systemChart.data.labels = [...systemChartData.labels];
-          systemChart.data.datasets[0].data = [...systemChartData.cpu];
-          systemChart.data.datasets[1].data = [...systemChartData.memory];
-          systemChart.data.datasets[2].data = [...systemChartData.temp];
-          systemChart.update('none');
-        }
-      }
-      
-      // Рекурсивная функция для цепочки запросов
-      function makeSequentialRequest() {
-        if (!isMonitoringActive) {
-          isRequestInProgress = false;
-          updateConnectionStatus('disconnected', 'Мониторинг остановлен');
-          return;
-        }
-        
-        if (isRequestInProgress) {
-          return;
-        }
-        
-        isRequestInProgress = true;
-        const requestStartTime = Date.now();
-        
-        if (consecutiveErrors > 0) {
-          updateConnectionStatus('reconnecting', `Попытка восстановления (ошибок подряд: ${consecutiveErrors})`);
-        }
-        
-        $.ajax({
-          url: '/apis',
-          type: 'GET',
-          dataType: 'json',
-          timeout: 3000,
-          success: function(response) {
-            const responseTime = Date.now() - requestStartTime;
-            
-            // Записываем метрики успешного запроса
-            requestTimes.push(requestStartTime);
-            responseTimes.push(responseTime);
-            totalRequests++;
-            successfulRequests++;
-            consecutiveErrors = 0;
-            
-            updateConnectionStatus('connected', `Соединение стабильно (${responseTime}мс)`);
-            
-            // Обновляем системные метрики
-            $('#cpu-percent').text(response.cpu_percent + '%');
-            $('#memory-percent').text(response.memory_percent + '%');
-            $('#memory-used').text(response.memory_used_gb + ' / ' + response.memory_total_gb + ' GB');
-            $('#swap-percent').text(response.swap_percent + '%');
-            $('#cpu-temp').text(response.cpu_temp + '°C');
-            
-            // Обновляем основные данные
-            $('#param1-value').text(response.param1 || 'N/A');
-            $('#param2-value').text(response.param2 || 'N/A');
-            $('#status').text('Успешно').css('color', 'green');
-            $('#server-update').text(response.last_update || '-');
-            $('#last-update').text(new Date().toLocaleTimeString());
-            
-            isRequestInProgress = false;
-            setTimeout(makeSequentialRequest, 10);
-          },
-          error: function(xhr, status, error) {
-            const responseTime = Date.now() - requestStartTime;
-            
-            requestTimes.push(requestStartTime);
-            responseTimes.push(responseTime);
-            totalRequests++;
-            consecutiveErrors++;
-            
-            let errorType = 'Неизвестная ошибка';
-            let retryDelay = 100;
-            
-            if (status === 'timeout') {
-              errorType = 'Таймаут (>3с)';
-              retryDelay = 50;
-            } else if (status === 'error') {
-              errorType = 'Ошибка сети';
-              retryDelay = 100;
-            }
-            
-            updateConnectionStatus('disconnected', `${errorType} (попытка ${consecutiveErrors})`);
-            
-            $('#status').text(`${errorType}: ${error}`).css('color', 'red');
-            $('#last-update').text(new Date().toLocaleTimeString());
-            
-            isRequestInProgress = false;
-            setTimeout(makeSequentialRequest, retryDelay);
-          }
-        });
-      }
-      
-      // Функции управления мониторингом
-      function startMonitoring() {
-        if (!isMonitoringActive) {
-          isMonitoringActive = true;
-          $('#monitoring-status').text('Активен').css('color', 'green');
-          $('#start-btn').prop('disabled', true);
-          $('#stop-btn').prop('disabled', false);
-          
-          consecutiveErrors = 0;
-          console.log('Мониторинг запущен - системные метрики');
-          updateConnectionStatus('reconnecting', 'Установка соединения...');
-          makeSequentialRequest();
-        }
-      }
-      
-      function stopMonitoring() {
-        if (isMonitoringActive) {
-          isMonitoringActive = false;
-          $('#monitoring-status').text('Остановлен').css('color', 'red');
-          $('#start-btn').prop('disabled', false);
-          $('#stop-btn').prop('disabled', true);
-          $('#status').text('Мониторинг остановлен');
-          
-          updateConnectionStatus('disconnected', 'Мониторинг остановлен');
-        }
-      }
-      
-      // Обработчики событий
-      $('#start-btn').click(startMonitoring);
-      $('#stop-btn').click(stopMonitoring);
-      
-      // Интервалы обновления
-      setInterval(calculateMetrics, 100);
-      setInterval(updateCharts, 1000);
-      
-      // Инициализация
-      $('#stop-btn').prop('disabled', true);
-      console.log('Системный мониторинг инициализирован');
-    });
-  </script>
 
+            // Update CPU Chart
+            cpuChart.data.labels = chartData.timestamps;
+            cpuChart.data.datasets[0].data = chartData.cpu;
+            cpuChart.update('none');
+
+            // Update Memory Chart
+            memoryChart.data.labels = chartData.timestamps;
+            memoryChart.data.datasets[0].data = chartData.memory;
+            memoryChart.update('none');
+        }
+
+        /**
+         * Initialize Modbus channels table
+         */
+        function initializeChannelsTable() {
+            const tbody = document.getElementById('channelsTableBody');
+            tbody.innerHTML = '';
+
+            for (let i = 0; i < 16; i++) {
+                const row = createChannelRow(i);
+                tbody.appendChild(row);
+            }
+        }
+
+        /**
+         * Create channel table row
+         */
+        function createChannelRow(channelNumber) {
+            const row = document.createElement('tr');
+            const channelKey = `chanel_${channelNumber}`;
+
+            row.innerHTML = `
+                <td class="channel-name">CH${channelNumber}</td>
+                <td class="channel-value" id="value_${channelNumber}">-</td>
+                <td>
+                    <div class="slider-container">
+                        <input type="range" class="slider" 
+                               id="slider_${channelNumber}" 
+                               min="-100" max="100" value="0"
+                               data-channel="${channelNumber}">
+                        <span class="slider-value" id="slider-value_${channelNumber}">0</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="input-container">
+                        <input type="number" id="input_${channelNumber}" 
+                               min="-100" max="100" value="0"
+                               placeholder="0"
+                               data-channel="${channelNumber}">
+                        <button class="btn-set" id="btn_${channelNumber}" 
+                                data-channel="${channelNumber}">Send</button>
+                    </div>
+                </td>
+            `;
+
+            const slider = row.querySelector(`#slider_${channelNumber}`);
+            const input = row.querySelector(`#input_${channelNumber}`);
+            const button = row.querySelector(`#btn_${channelNumber}`);
+
+            // Slider event
+            slider.addEventListener('input', function(e) {
+                const value = parseInt(this.value);
+                const channel = parseInt(this.dataset.channel);
+
+                document.getElementById(`slider-value_${channel}`).textContent = value;
+
+                if (sliderTimeouts[channel]) {
+                    clearTimeout(sliderTimeouts[channel]);
+                }
+
+                sliderTimeouts[channel] = setTimeout(() => {
+                    sendChannelValue(channel, value);
+                    sliderTimeouts[channel] = null;
+                }, SLIDER_DEBOUNCE);
+            });
+
+            // Input validation
+            input.addEventListener('input', function(e) {
+                let value = parseInt(this.value) || 0;
+                if (value > 100) value = 100;
+                if (value < -100) value = -100;
+                this.value = value;
+            });
+
+            // Button click
+            button.addEventListener('click', function() {
+                const channel = parseInt(this.dataset.channel);
+                const value = parseInt(input.value) || 0;
+                sendChannelValue(channel, value);
+            });
+
+            // Enter key
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const channel = parseInt(this.dataset.channel);
+                    const value = parseInt(this.value) || 0;
+                    sendChannelValue(channel, value);
+                }
+            });
+
+            return row;
+        }
+
+        /**
+         * Send channel value to server
+         */
+        async function sendChannelValue(channel, value) {
+            try {
+                const response = await fetch(`${API_URL}/set_chanel`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chanel: channel,
+                        data: value
+                    })
+                });
+
+                const data = await response.json();
+                modbusRequestCount++;
+
+                if (response.ok) {
+                    showFeedback(`Channel ${channel} set to ${value}`, 'success');
+                    document.getElementById(`input_${channel}`).value = value;
+                } else {
+                    modbusErrorCount++;
+                    showFeedback(`Error: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                modbusErrorCount++;
+                showFeedback(`Connection error: ${error.message}`, 'error');
+            }
+
+            updateModbusStats();
+        }
+
+        /**
+         * Fetch system data
+         */
+        async function fetchSystemData() {
+            try {
+                const response = await fetch(`${API_URL}/`);
+                const data = await response.json();
+                systemRequestCount++;
+
+                systemData = data;
+                updateSystemDisplay();
+                updateCharts(data.cpu_percent, data.memory_percent);
+                isSystemConnected = true;
+                updateConnectionStatus(true, 'system');
+            } catch (error) {
+                isSystemConnected = false;
+                updateConnectionStatus(false, 'system');
+                console.error('System data fetch error:', error);
+            }
+        }
+
+        /**
+         * Update system display
+         */
+        function updateSystemDisplay() {
+            document.getElementById('cpuPercent').textContent = `${systemData.cpu_percent || 0}%`;
+            document.getElementById('memoryPercent').textContent = `${systemData.memory_percent || 0}%`;
+            document.getElementById('memoryUsed').textContent = 
+                `${systemData.memory_used_gb || 0}/${systemData.memory_total_gb || 0}GB`;
+            document.getElementById('swapPercent').textContent = `${systemData.swap_percent || 0}%`;
+            document.getElementById('cpuTemp').textContent = `${systemData.cpu_temp || 0}°C`;
+            document.getElementById('lastUpdate').textContent = systemData.last_update || '-';
+            document.getElementById('requestCount').textContent = systemRequestCount;
+        }
+
+        /**
+         * Fetch Modbus data
+         */
+        async function fetchModbusData() {
+            try {
+                const response = await fetch(`${API_URL}/get_chanel`);
+                const data = await response.json();
+                modbusRequestCount++;
+
+                channelsData = data;
+                updateChannelsDisplay();
+                isModbusConnected = true;
+                updateConnectionStatus(true, 'modbus');
+            } catch (error) {
+                isModbusConnected = false;
+                updateConnectionStatus(false, 'modbus');
+                console.error('Modbus data fetch error:', error);
+            }
+
+            updateModbusStats();
+        }
+
+        /**
+         * Update channels display
+         */
+        function updateChannelsDisplay() {
+            for (let i = 0; i < 16; i++) {
+                const channelKey = `chanel_${i}`;
+                const value = channelsData[channelKey] || 0;
+
+                const valueCell = document.getElementById(`value_${i}`);
+                valueCell.textContent = value;
+                valueCell.className = 'channel-value';
+
+                if (value > 0) {
+                    valueCell.classList.add('value-positive');
+                } else if (value < 0) {
+                    valueCell.classList.add('value-negative');
+                } else {
+                    valueCell.classList.add('value-zero');
+                }
+
+                const slider = document.getElementById(`slider_${i}`);
+                if (!slider.dataset.userInteracting) {
+                    slider.value = value;
+                    document.getElementById(`slider-value_${i}`).textContent = value;
+                }
+
+                const input = document.getElementById(`input_${i}`);
+                if (document.activeElement !== input) {
+                    input.value = value;
+                }
+            }
+
+            const now = new Date();
+            document.getElementById('modbusLastUpdate').textContent = 
+                now.toLocaleTimeString('en-US');
+        }
+
+        /**
+         * Update connection status
+         */
+        function updateConnectionStatus(isConnected, type) {
+            if (type === 'system') {
+                const statusElement = document.getElementById('connectionStatus');
+                statusElement.textContent = isConnected ? '🟢 Online' : '🔴 Offline';
+                statusElement.style.color = isConnected ? '#27ae60' : '#e74c3c';
+            } else if (type === 'modbus') {
+                const statusElement = document.getElementById('modbusStatus');
+                statusElement.textContent = isConnected ? '🟢 Online' : '🔴 Offline';
+                statusElement.style.color = isConnected ? '#27ae60' : '#e74c3c';
+            }
+        }
+
+        /**
+         * Update Modbus stats
+         */
+        function updateModbusStats() {
+            document.getElementById('modbusRequestCount').textContent = modbusRequestCount;
+            document.getElementById('modbusErrorCount').textContent = modbusErrorCount;
+        }
+
+        /**
+         * Show feedback message
+         */
+        function showFeedback(message, type) {
+            const feedbackElement = document.getElementById('feedbackMessage');
+            feedbackElement.textContent = message;
+            feedbackElement.className = `feedback-message ${type}`;
+
+            setTimeout(() => {
+                feedbackElement.className = 'feedback-message';
+            }, 3000);
+        }
+
+        /**
+         * Initialize everything
+         */
+        function init() {
+            console.log('🚀 Initializing System & Modbus Control Panel...');
+            
+            initializeTabs();
+            initializeCharts();
+            initializeChannelsTable();
+
+            // Initial data fetch
+            fetchSystemData();
+            fetchModbusData();
+
+            // Periodic updates
+            setInterval(fetchSystemData, SYSTEM_REFRESH_INTERVAL);
+            setInterval(fetchModbusData, MODBUS_REFRESH_INTERVAL);
+
+            // Slider interaction tracking
+            document.querySelectorAll('.slider').forEach(slider => {
+                slider.addEventListener('mousedown', function() {
+                    this.dataset.userInteracting = 'true';
+                });
+                slider.addEventListener('mouseup', function() {
+                    delete this.dataset.userInteracting;
+                });
+                slider.addEventListener('touchstart', function() {
+                    this.dataset.userInteracting = 'true';
+                });
+                slider.addEventListener('touchend', function() {
+                    delete this.dataset.userInteracting;
+                });
+            });
+
+            console.log('✅ Initialization complete');
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
 </body>
 </html>
