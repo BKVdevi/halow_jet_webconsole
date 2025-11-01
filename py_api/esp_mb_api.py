@@ -2,7 +2,7 @@ import minimalmodbus
 import serial
 import time
 
-instrument = minimalmodbus.Instrument('COM4', 0x01, close_port_after_each_call=False)
+instrument = minimalmodbus.Instrument('/dev/serial/by-path/platform-3f980000.usb-usbv2-0:1.2:1.0-port0', 0x01, close_port_after_each_call=False)
 instrument.serial.bytesize = 8
 instrument.serial.parity   = serial.PARITY_NONE
 instrument.serial.stopbits = serial.STOPBITS_ONE
