@@ -5,6 +5,7 @@ import threading
 from collections import deque
 from flask import Flask, jsonify, request
 from datetime import datetime
+from queue import Queue, Empty
 
 app = Flask(__name__)
 
@@ -14,17 +15,34 @@ BAUDRATE = 115200
 SLAVE_ADDRESS = 5
 MAX_READ_QUANTITY = 47
 TIMEOUT = 1.0
-LOGS_ENABLED = 1  # 1 = enabled, 0 = disabled
-MAX_ERROR_LOGS = 10
+LOGS_ENABLED = 1
+MAX_ERROR_LOGS = 30
+POLLING_INTERVAL = 0.1  # Задержка между запросами к железу (секунды)
+RANGE_TIMEOUT = 10  # Таймаут неиспользуемого диапазона (секунды)
 
 # ===== GLOBAL STATE =====
 class ModbusClient:
     def __init__(self):
         self.port = None
         self.status = 'offline'
-        self.last_packets = deque(maxlen=10)  # For average response time
+        self.last_packets = deque(maxlen=10)
         self.error_logs = deque(maxlen=MAX_ERROR_LOGS)
         self.lock = threading.Lock()
+        
+        # Кэш данных регистров
+        self.register_cache = {}  # {address: value}
+        self.cache_lock = threading.Lock()
+        
+        # Диапазоны для polling
+        self.active_ranges = {}  # {(start, end): last_access_time}
+        self.ranges_lock = threading.Lock()
+        
+        # Очередь задач
+        self.task_queue = Queue()
+        
+        # Флаг работы фонового потока
+        self.running = False
+        self.worker_thread = None
     
     def log(self, message, level='INFO'):
         """Log message with timestamp"""
@@ -40,7 +58,7 @@ class ModbusClient:
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         error_msg = f"[{timestamp}] {message}"
         self.error_logs.append(error_msg)
-        self.log(f"ERROR LOGGED: {message}", 'ERROR')
+        self.log(f"ERROR: {message}", 'ERROR')
     
     def record_packet_time(self, response_time):
         """Record response time for average calculation"""
@@ -81,6 +99,50 @@ class ModbusClient:
                 self.log("Serial port closed")
         except Exception as e:
             self.add_error_log(f"Error closing port: {str(e)}")
+    
+    def update_active_range(self, start, end):
+        """Обновить активный диапазон"""
+        with self.ranges_lock:
+            self.active_ranges[(start, end)] = time.time()
+    
+    def get_polling_range(self):
+        """Получить текущий диапазон для polling (самый широкий)"""
+        with self.ranges_lock:
+            current_time = time.time()
+            
+            # Удалить устаревшие диапазоны
+            to_remove = []
+            for range_key, last_access in self.active_ranges.items():
+                if current_time - last_access > RANGE_TIMEOUT:
+                    to_remove.append(range_key)
+            
+            for key in to_remove:
+                del self.active_ranges[key]
+                self.log(f"Range {key} removed (timeout)")
+            
+            if not self.active_ranges:
+                return None
+            
+            # Найти самый широкий диапазон
+            min_addr = min(start for start, end in self.active_ranges.keys())
+            max_addr = max(end for start, end in self.active_ranges.keys())
+            
+            return (min_addr, max_addr)
+    
+    def get_cached_registers(self, start, quantity):
+        """Получить данные из кэша"""
+        with self.cache_lock:
+            registers = []
+            for i in range(quantity):
+                addr = start + i
+                registers.append(self.register_cache.get(addr, 0))
+            return registers
+    
+    def update_cache(self, start, registers):
+        """Обновить кэш данных"""
+        with self.cache_lock:
+            for i, value in enumerate(registers):
+                self.register_cache[start + i] = value
 
 client = ModbusClient()
 
@@ -143,13 +205,11 @@ def parse_modbus_response(response):
         'registers': []
     }
     
-    # Check for error (bit 7 set)
     if response[1] & 0x80:
         result['status'] = 'error'
         result['exception_code'] = response[2] if len(response) > 2 else None
         return result
     
-    # Parse read holding registers response
     if response[1] == 0x03:
         byte_count = response[2]
         data = response[3:3 + byte_count]
@@ -159,16 +219,14 @@ def parse_modbus_response(response):
                 register_value = (data[i] << 8) | data[i + 1]
                 result['registers'].append(register_value)
     
-    # Parse write single register response
     elif response[1] == 0x06:
         result['registers'].append((response[2] << 8) | response[3])
     
     return result
 
-def send_modbus_request(slave_address, register_address, quantity=None, write_value=None):
-    """Send Modbus RTU request and get response"""
+def send_modbus_request_raw(slave_address, register_address, quantity=None, write_value=None):
+    """Отправить Modbus запрос к железу (используется только фоновым потоком)"""
     with client.lock:
-        # Ensure port is open
         if not client.is_connected():
             if not client.open_port():
                 return {
@@ -177,7 +235,6 @@ def send_modbus_request(slave_address, register_address, quantity=None, write_va
                 }
         
         try:
-            # Create appropriate request
             if write_value is not None:
                 request_data = create_modbus_write_request(slave_address, register_address, write_value)
                 operation = 'WRITE'
@@ -185,9 +242,6 @@ def send_modbus_request(slave_address, register_address, quantity=None, write_va
                 request_data = create_modbus_read_request(slave_address, register_address, quantity)
                 operation = 'READ'
             
-            client.log(f"{operation} REQ: addr={register_address}, qty/val={quantity or write_value}")
-            
-            # Send request and measure response time
             start_time = time.time()
             client.port.write(request_data)
             time.sleep(0.05)
@@ -196,9 +250,7 @@ def send_modbus_request(slave_address, register_address, quantity=None, write_va
             response_time = time.time() - start_time
             
             client.record_packet_time(response_time)
-            client.log(f"{operation} OK: {len(response)} bytes, {response_time*1000:.1f}ms")
             
-            # Parse response
             parsed = parse_modbus_response(response)
             
             if parsed['status'] == 'success':
@@ -220,10 +272,79 @@ def send_modbus_request(slave_address, register_address, quantity=None, write_va
             client.add_error_log(f"Unexpected error: {str(e)}")
             return {'status': 'error', 'message': f'Error: {str(e)}'}
 
+# ===== BACKGROUND WORKER =====
+def background_worker():
+    """Фоновый поток для обработки Modbus запросов"""
+    client.log("Background worker started")
+    
+    while client.running:
+        try:
+            # Проверяем очередь задач
+            try:
+                task = client.task_queue.get(timeout=0.1)
+                
+                if task['type'] == 'write':
+                    # Задача на запись
+                    addr = task['address']
+                    value = task['value']
+                    
+                    result = send_modbus_request_raw(
+                        SLAVE_ADDRESS,
+                        addr,
+                        write_value=value
+                    )
+                    
+                    if result['status'] == 'success':
+                        client.log(f"Write success: addr={addr}, value={value}")
+                    else:
+                        client.add_error_log(f"Write failed: addr={addr}, {result.get('message')}")
+                
+                client.task_queue.task_done()
+                time.sleep(POLLING_INTERVAL)
+                
+            except Empty:
+                # Очередь пуста - делаем polling регистров
+                polling_range = client.get_polling_range()
+                
+                if polling_range:
+                    start_addr, end_addr = polling_range
+                    total_quantity = end_addr - start_addr + 1
+                    
+                    # Разбиваем на части по MAX_READ_QUANTITY
+                    current_addr = start_addr
+                    remaining = total_quantity
+                    
+                    while remaining > 0:
+                        read_qty = min(remaining, MAX_READ_QUANTITY)
+                        
+                        result = send_modbus_request_raw(
+                            SLAVE_ADDRESS,
+                            current_addr,
+                            quantity=read_qty
+                        )
+                        
+                        if result['status'] == 'success':
+                            client.update_cache(current_addr, result['registers'])
+                        else:
+                            client.add_error_log(f"Polling failed: addr={current_addr}, qty={read_qty}")
+                        
+                        current_addr += read_qty
+                        remaining -= read_qty
+                        time.sleep(POLLING_INTERVAL)
+                else:
+                    # Нет активных диапазонов - ждём
+                    time.sleep(0.5)
+        
+        except Exception as e:
+            client.add_error_log(f"Worker error: {str(e)}")
+            time.sleep(1)
+    
+    client.log("Background worker stopped")
+
 # ===== API ENDPOINTS =====
 @app.route('/get_data', methods=['POST'])
 def get_data():
-    """Read registers from Modbus device"""
+    """Читать регистры (мгновенный ответ из кэша)"""
     try:
         data = request.get_json()
         
@@ -236,47 +357,27 @@ def get_data():
         address = int(data['address'])
         quantity = int(data['quantity'])
         
-        if quantity > MAX_READ_QUANTITY * 10:  # Arbitrary upper limit
+        if quantity <= 0 or quantity > 1000:
             return jsonify({
                 'status': 'error',
-                'message': f'Quantity too large (max ~{MAX_READ_QUANTITY * 10})'
+                'message': 'Invalid quantity'
             }), 400
         
-        all_registers = []
-        current_addr = address
-        remaining = quantity
+        # Обновить активный диапазон
+        client.update_active_range(address, address + quantity - 1)
         
-        # Split into multiple requests if needed
-        while remaining > 0:
-            read_qty = min(remaining, MAX_READ_QUANTITY)
-            
-            result = send_modbus_request(
-                slave_address=SLAVE_ADDRESS,
-                register_address=current_addr,
-                quantity=read_qty
-            )
-            
-            if result['status'] != 'success':
-                return jsonify({
-                    'status': 'error',
-                    'message': result.get('message', 'Modbus read failed'),
-                    'partial_data': all_registers
-                }), 500
-            
-            all_registers.extend(result['registers'])
-            current_addr += read_qty
-            remaining -= read_qty
-            time.sleep(0.01)
+        # Получить данные из кэша
+        registers = client.get_cached_registers(address, quantity)
         
         return jsonify({
             'status': 'success',
             'address': address,
             'quantity': quantity,
-            'registers': all_registers
+            'registers': registers
         }), 200
     
     except Exception as e:
-        client.add_error_log(f"GET_DATA endpoint error: {str(e)}")
+        client.add_error_log(f"GET_DATA error: {str(e)}")
         return jsonify({
             'status': 'error',
             'message': str(e)
@@ -284,7 +385,7 @@ def get_data():
 
 @app.route('/send_data', methods=['POST'])
 def send_data():
-    """Write single register to Modbus device"""
+    """Записать регистр (мгновенный ответ, задача в очередь)"""
     try:
         data = request.get_json()
         
@@ -297,34 +398,29 @@ def send_data():
         address = int(data['address'])
         value = int(data['value'])
         
-        # Validate value range (0-65535 for unsigned 16-bit)
         if value < 0 or value > 65535:
             return jsonify({
                 'status': 'error',
                 'message': 'Value must be 0-65535'
             }), 400
         
-        result = send_modbus_request(
-            slave_address=SLAVE_ADDRESS,
-            register_address=address,
-            write_value=value
-        )
+        # Поставить задачу в очередь
+        client.task_queue.put({
+            'type': 'write',
+            'address': address,
+            'value': value
+        })
         
-        if result['status'] != 'success':
-            return jsonify({
-                'status': 'error',
-                'message': result.get('message', 'Modbus write failed')
-            }), 500
-        
+        # Мгновенный ответ
         return jsonify({
             'status': 'success',
             'address': address,
             'value': value,
-            'written': result['registers'][0] if result['registers'] else value
+            'message': 'Write task queued'
         }), 200
     
     except Exception as e:
-        client.add_error_log(f"SEND_DATA endpoint error: {str(e)}")
+        client.add_error_log(f"SEND_DATA error: {str(e)}")
         return jsonify({
             'status': 'error',
             'message': str(e)
@@ -332,7 +428,9 @@ def send_data():
 
 @app.route('/status', methods=['GET'])
 def status():
-    """Get current connection status and metrics"""
+    """Получить статус (без обращения к порту)"""
+    polling_range = client.get_polling_range()
+    
     return jsonify({
         'status': 'success',
         'modbus_status': client.status,
@@ -341,29 +439,41 @@ def status():
         'last_10_packets_count': len(client.last_packets),
         'error_logs': list(client.error_logs),
         'error_log_count': len(client.error_logs),
+        'polling_range': f"{polling_range[0]}-{polling_range[1]}" if polling_range else "none",
+        'active_ranges_count': len(client.active_ranges),
+        'queue_size': client.task_queue.qsize(),
+        'cache_size': len(client.register_cache),
         'timestamp': datetime.now().isoformat()
     }), 200
 
 # ===== STARTUP/SHUTDOWN =====
-@app.before_request
-def before_request():
-    """Ensure connection before each request"""
-    if not client.is_connected():
-        client.open_port()
+def start_background_worker():
+    """Запустить фоновый поток"""
+    client.running = True
+    client.worker_thread = threading.Thread(target=background_worker, daemon=True)
+    client.worker_thread.start()
+    client.log("Background worker thread started")
 
-@app.teardown_appcontext
-def shutdown(exception=None):
-    """Cleanup on shutdown"""
-    pass
+def stop_background_worker():
+    """Остановить фоновый поток"""
+    client.running = False
+    if client.worker_thread:
+        client.worker_thread.join(timeout=5)
+    client.log("Background worker thread stopped")
 
 def cleanup():
     """Cleanup on application exit"""
+    stop_background_worker()
     client.close_port()
 
 if __name__ == "__main__":
     client.log("Modbus API Server Starting", 'INFO')
+    
+    # Запуск фонового потока
+    start_background_worker()
+    
     try:
-        app.run(host='localhost', port=8082, debug=False, threaded=True)
+        app.run(host='0.0.0.0', port=8082, debug=False, threaded=True)
     except KeyboardInterrupt:
         client.log("Shutdown signal received", 'INFO')
     finally:

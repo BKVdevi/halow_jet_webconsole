@@ -12,7 +12,6 @@
             box-sizing: border-box;
         }
 
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -20,7 +19,6 @@
             padding: 20px;
             color: #333;
         }
-
 
         .container {
             max-width: 1600px;
@@ -31,7 +29,6 @@
             padding: 30px;
         }
 
-
         .header {
             text-align: center;
             margin-bottom: 30px;
@@ -39,19 +36,16 @@
             padding-bottom: 20px;
         }
 
-
         .header h1 {
             color: #667eea;
             font-size: 2.5em;
             margin-bottom: 10px;
         }
 
-
         .header p {
             color: #666;
             font-size: 1em;
         }
-
 
         .status-bar {
             display: grid;
@@ -63,7 +57,6 @@
             border-radius: 10px;
         }
 
-
         .status-item {
             background: white;
             padding: 15px;
@@ -71,7 +64,6 @@
             border-left: 4px solid #667eea;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
-
 
         .status-item label {
             font-weight: bold;
@@ -81,19 +73,16 @@
             margin-bottom: 5px;
         }
 
-
         .status-item .value {
             font-size: 1.2em;
             color: #333;
             font-weight: bold;
         }
 
-
         .status-item .unit {
             font-size: 0.8em;
             color: #999;
         }
-
 
         .tabs {
             display: flex;
@@ -102,7 +91,6 @@
             border-bottom: 2px solid #e0e0e0;
             flex-wrap: wrap;
         }
-
 
         .tab-button {
             padding: 12px 25px;
@@ -117,11 +105,9 @@
             border-radius: 8px 8px 0 0;
         }
 
-
         .tab-button:hover {
             background: #e0e0e0;
         }
-
 
         .tab-button.active {
             background: white;
@@ -129,17 +115,14 @@
             border-bottom-color: #667eea;
         }
 
-
         .tab-content {
             display: none;
         }
-
 
         .tab-content.active {
             display: block;
             animation: fadeIn 0.3s ease;
         }
-
 
         @keyframes fadeIn {
             from {
@@ -152,14 +135,12 @@
             }
         }
 
-
         .charts-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
             gap: 25px;
             margin-bottom: 30px;
         }
-
 
         .chart-container {
             background: white;
@@ -171,7 +152,6 @@
             min-height: 350px;
         }
 
-
         .chart-container h3 {
             color: #667eea;
             margin-bottom: 15px;
@@ -179,17 +159,14 @@
             text-align: center;
         }
 
-
         .chart-wrapper {
             position: relative;
             height: 300px;
         }
 
-
         .channels-section {
             margin-bottom: 30px;
         }
-
 
         .section-title {
             font-size: 1.8em;
@@ -198,7 +175,6 @@
             border-bottom: 2px solid #667eea;
             padding-bottom: 10px;
         }
-
 
         .channels-table {
             width: 100%;
@@ -209,13 +185,11 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-
         .channels-table thead {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             font-weight: bold;
         }
-
 
         .channels-table th {
             padding: 18px;
@@ -223,30 +197,25 @@
             font-size: 0.95em;
         }
 
-
         .channels-table td {
             padding: 18px;
             border-bottom: 1px solid #e0e0e0;
         }
-
 
         .channels-table tbody tr:hover {
             background: #f5f5f5;
             transition: background 0.2s ease;
         }
 
-
         .channels-table tbody tr:last-child td {
             border-bottom: none;
         }
-
 
         .channel-name {
             font-weight: bold;
             color: #667eea;
             min-width: 80px;
         }
-
 
         .channel-value {
             text-align: center;
@@ -256,21 +225,17 @@
             min-width: 60px;
         }
 
-
         .value-positive {
             color: #27ae60;
         }
-
 
         .value-negative {
             color: #e74c3c;
         }
 
-
         .value-zero {
             color: #95a5a6;
         }
-
 
         .slider-container {
             display: flex;
@@ -279,7 +244,6 @@
             flex: 1;
             min-width: 200px;
         }
-
 
         .slider {
             flex: 1;
@@ -291,7 +255,6 @@
             appearance: none;
             cursor: pointer;
         }
-
 
         .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -305,11 +268,9 @@
             transition: box-shadow 0.2s ease;
         }
 
-
         .slider::-webkit-slider-thumb:hover {
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
-
 
         .slider::-moz-range-thumb {
             width: 18px;
@@ -322,11 +283,9 @@
             transition: box-shadow 0.2s ease;
         }
 
-
         .slider::-moz-range-thumb:hover {
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
-
 
         .slider-value {
             display: inline-block;
@@ -337,14 +296,12 @@
             color: #667eea;
         }
 
-
         .input-container {
             display: flex;
             gap: 8px;
             align-items: center;
             min-width: 180px;
         }
-
 
         .input-container input {
             width: 70px;
@@ -356,13 +313,11 @@
             transition: border-color 0.2s ease;
         }
 
-
         .input-container input:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
-
 
         .input-container input::-webkit-outer-spin-button,
         .input-container input::-webkit-inner-spin-button {
@@ -370,11 +325,9 @@
             margin: 0;
         }
 
-
         .input-container input[type=number] {
             -moz-appearance: textfield;
         }
-
 
         .btn-set {
             padding: 10px 18px;
@@ -389,17 +342,14 @@
             white-space: nowrap;
         }
 
-
         .btn-set:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
 
-
         .btn-set:active {
             transform: translateY(0);
         }
-
 
         .feedback-message {
             margin-top: 20px;
@@ -416,7 +366,6 @@
             min-width: 300px;
         }
 
-
         .feedback-message.success {
             background: #d4edda;
             color: #155724;
@@ -424,14 +373,12 @@
             display: block;
         }
 
-
         .feedback-message.error {
             background: #f8d7da;
             color: #721c24;
             border: 2px solid #f5c6cb;
             display: block;
         }
-
 
         @keyframes slideIn {
             from {
@@ -444,81 +391,338 @@
             }
         }
 
+        /* JET Modbus Debug Styles */
+        .debug-status-bar {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .debug-status-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .debug-status-item label {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 0.75em;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .debug-status-item .value {
+            font-size: 1.1em;
+            color: #333;
+            font-weight: bold;
+            word-break: break-all;
+        }
+
+        .status-online { color: #27ae60; }
+        .status-offline { color: #e74c3c; }
+        .status-mb-offline { color: #f39c12; }
+
+        .error-logs-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .logs-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .logs-header::after {
+            content: '▼';
+            transition: transform 0.3s ease;
+        }
+
+        .logs-header.collapsed::after {
+            transform: rotate(-90deg);
+        }
+
+        .logs-content {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .logs-content.show {
+            display: block;
+        }
+
+        .log-line {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            padding: 5px 0;
+            color: #333;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .log-line:last-child {
+            border-bottom: none;
+        }
+
+        .log-error { color: #e74c3c; font-weight: bold; }
+        .log-info { color: #3498db; }
+        .log-time { color: #7f8c8d; font-size: 0.75em; }
+
+        .debug-settings {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .settings-title {
+            font-size: 1.2em;
+            color: #667eea;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .setting-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .setting-item label {
+            font-size: 0.9em;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .setting-item input {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.95em;
+            transition: border-color 0.2s ease;
+        }
+
+        .setting-item input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .registers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .register-block {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 2px solid #e0e0e0;
+            transition: border-color 0.2s ease;
+        }
+
+        .register-block:hover {
+            border-color: #667eea;
+        }
+
+        .register-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .register-address {
+            font-size: 1em;
+        }
+
+        .register-address-hex {
+            font-size: 0.8em;
+            opacity: 0.9;
+        }
+
+        .register-body {
+            padding: 15px;
+        }
+
+        .register-value {
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .register-format-select {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.85em;
+            color: #333;
+            background: white;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .register-format-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .register-chart-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .register-chart-checkbox input {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .register-chart-checkbox label {
+            cursor: pointer;
+            margin: 0;
+            font-size: 0.9em;
+        }
+
+        .debug-chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e0e0e0;
+            margin-bottom: 25px;
+            display: none;
+        }
+
+        .debug-chart-container.show {
+            display: block;
+        }
+
+        .debug-chart-wrapper {
+            position: relative;
+            height: 400px;
+        }
+
+        .write-section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .write-title {
+            font-size: 1.2em;
+            color: #667eea;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .write-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .write-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .write-item label {
+            font-size: 0.9em;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .write-item input {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.95em;
+        }
+
+        .write-item input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .write-button {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+
+        .write-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .write-button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .registers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .write-grid {
+                grid-template-columns: 1fr;
+            }
+        }
 
         @media (max-width: 1200px) {
             .charts-grid {
                 grid-template-columns: 1fr;
-            }
-
-
-            .channels-table {
-                font-size: 0.9em;
-            }
-
-
-            .channels-table th,
-            .channels-table td {
-                padding: 12px;
-            }
-        }
-
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-
-
-            .header h1 {
-                font-size: 1.8em;
-            }
-
-
-            .status-bar {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-
-            .channels-table {
-                font-size: 0.8em;
-            }
-
-
-            .channels-table th,
-            .channels-table td {
-                padding: 8px;
-            }
-
-
-            .slider-container {
-                min-width: 100px;
-            }
-
-
-            .input-container {
-                flex-direction: column;
-                gap: 5px;
-            }
-
-
-            .input-container input {
-                width: 100%;
-            }
-
-
-            .btn-set {
-                width: 100%;
-            }
-
-
-            .tabs {
-                gap: 5px;
-            }
-
-
-            .tab-button {
-                padding: 10px 15px;
-                font-size: 0.9em;
             }
         }
     </style>
@@ -530,13 +734,12 @@
             <p>Real-time monitoring and control system</p>
         </div>
 
-
         <div class="tabs">
             <button class="tab-button active" data-tab="system">📊 System Metrics</button>
             <button class="tab-button" data-tab="modbus">🔧 Modbus Channels</button>
             <button class="tab-button" data-tab="jetdata">🛩️ Jet Data</button>
+            <button class="tab-button" data-tab="jetdebug">🐛 jet-modbus(debug)</button>
         </div>
-
 
         <!-- System Metrics Tab -->
         <div id="system" class="tab-content active">
@@ -575,7 +778,6 @@
                 </div>
             </div>
 
-
             <div class="charts-grid">
                 <div class="chart-container">
                     <h3>CPU Usage History</h3>
@@ -591,7 +793,6 @@
                 </div>
             </div>
         </div>
-
 
         <!-- Modbus Channels Tab -->
         <div id="modbus" class="tab-content">
@@ -614,7 +815,6 @@
                 </div>
             </div>
 
-
             <div class="channels-section">
                 <h2 class="section-title">Channel Control</h2>
                 <table class="channels-table">
@@ -633,12 +833,10 @@
                 </table>
             </div>
 
-
             <div class="feedback-message" id="feedbackMessage"></div>
         </div>
 
-
-        <!-- System Metrics Tab -->
+        <!-- Jet Data Tab -->
         <div id="jetdata" class="tab-content">
             <div class="status-bar">
                 <div class="status-item">
@@ -657,11 +855,7 @@
                     <label>Потребление топлива</label>
                     <div class="value" id="cpuPercent">-<span class="unit">gr/s</span></div>
                 </div>
-                
-
-
             </div>
-
 
             <div class="charts-grid">
                 <div class="chart-container">
@@ -684,18 +878,109 @@
                 </div>
             </div>
         </div>
-    </div>
 
+        <!-- Jet Modbus Debug Tab -->
+        <div id="jetdebug" class="tab-content">
+            <!-- Status -->
+            <div class="debug-status-bar">
+                <div class="debug-status-item">
+                    <label>Service Status</label>
+                    <div class="value" id="debugStatus">🔴 total-offline</div>
+                </div>
+                <div class="debug-status-item">
+                    <label>Last Packet</label>
+                    <div class="value" id="debugLastPacket">-</div>
+                </div>
+                <div class="debug-status-item">
+                    <label>Avg Response Time</label>
+                    <div class="value" id="debugAvgTime">- ms</div>
+                </div>
+                <div class="debug-status-item">
+                    <label>Polling Range</label>
+                    <div class="value" id="debugPollingRange">-</div>
+                </div>
+                <div class="debug-status-item">
+                    <label>Queue Size</label>
+                    <div class="value" id="debugQueueSize">-</div>
+                </div>
+                <div class="debug-status-item">
+                    <label>Cache Size</label>
+                    <div class="value" id="debugCacheSize">-</div>
+                </div>
+                <div class="debug-status-item">
+                    <label>Active Ranges</label>
+                    <div class="value" id="debugActiveRanges">-</div>
+                </div>
+            </div>
+
+            <!-- Error Logs -->
+            <div class="error-logs-container">
+                <div class="logs-header collapsed">Error Logs (max 10)</div>
+                <div class="logs-content" id="logsContent"></div>
+            </div>
+
+            <!-- Settings -->
+            <div class="debug-settings">
+                <div class="settings-title">⚙️ Settings</div>
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <label>Start Address</label>
+                        <input type="number" id="debugStartAddr" value="0" min="0" max="65535">
+                    </div>
+                    <div class="setting-item">
+                        <label>Quantity (max 100)</label>
+                        <input type="number" id="debugQuantity" value="100" min="1" max="100">
+                    </div>
+                    <div class="setting-item">
+                        <label>Interval (seconds)</label>
+                        <input type="number" id="debugInterval" value="0.5" min="0.1" max="60" step="0.1">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Registers Grid -->
+            <div id="registersGridContainer">
+                <div class="registers-grid" id="registersGrid"></div>
+            </div>
+
+            <!-- Chart -->
+            <div class="debug-chart-container" id="debugChartContainer">
+                <h3 style="color: #667eea; margin-bottom: 15px;">Register Values Over Time</h3>
+                <div class="debug-chart-wrapper">
+                    <canvas id="debugChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Write Section -->
+            <div class="write-section">
+                <div class="write-title">✍️ Write Register</div>
+                <div class="write-grid">
+                    <div class="write-item">
+                        <label>Register Address</label>
+                        <input type="number" id="writeAddr" value="0" min="0" max="65535">
+                    </div>
+                    <div class="write-item">
+                        <label>Value (0-65535)</label>
+                        <input type="number" id="writeValue" value="0" min="0" max="65535">
+                    </div>
+                </div>
+                <button class="write-button" id="writeBtn">Send Write Request</button>
+            </div>
+
+            <div class="feedback-message" id="debugFeedbackMessage"></div>
+        </div>
+    </div>
 
     <script src="scripts/chart.min.js"></script>
     <script>
         // Configuration
         const API_URL = '/api';
-        const SYSTEM_REFRESH_INTERVAL = 1000; // ms
-        const MODBUS_REFRESH_INTERVAL = 500; // ms
-        const SLIDER_DEBOUNCE = 100; // ms
+        const SYSTEM_REFRESH_INTERVAL = 1000;
+        const DEBUG_STATUS_INTERVAL = 1000;
+        const SLIDER_DEBOUNCE = 100;
         const MAX_CHART_POINTS = 60;
 
+        let currentModbusRefreshInterval = 500;
 
         // State
         let systemData = {};
@@ -706,12 +991,32 @@
         let modbusErrorCount = 0;
         let isSystemConnected = false;
         let isModbusConnected = false;
+        let activeTab = 'system';
 
+        // Debug state - ВАЖНО: статус обновляется ТОЛЬКО из status запросов
+        let debugState = {
+            startAddr: 0,
+            quantity: 100,
+            interval: 0.5,
+            registers: {},
+            chartData: {},
+            selectedForChart: new Set(),
+            debugChart: null,
+            debugInterval: null,
+            statusInterval: null,
+            modbusStatus: 'total-offline',  // Только из status запроса
+            lastPacketTime: null,
+            avgResponseTime: 0,
+            pollingRange: '-',
+            queueSize: 0,
+            cacheSize: 0,
+            activeRangesCount: 0,
+            errorLogs: []
+        };
 
         // Chart instances
         let cpuChart = null;
         let memoryChart = null;
-
 
         // Chart data buffers
         let chartData = {
@@ -720,53 +1025,43 @@
             timestamps: []
         };
 
+        // Intervals storage
+        let systemInterval = null;
+        let modbusInterval = null;
 
-        let jetchartData = {
-            tepm: [],
-            rpm: [],
-            fuel: [],
-            timestamps: []
-        };
-
-
-        /**
-         * Convert percentage (-100 to 100) to PWM microseconds (500 to 2500)
-         */
         function percentToPWM(percent) {
-            // -100 -> 500µs, 0 -> 1500µs, 100 -> 2500µs
             return 1500 + (percent * 5);
         }
 
-
-        /**
-         * Initialize tabs
-         */
         function initializeTabs() {
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
 
-
             tabButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const tabName = this.dataset.tab;
-
-
-                    // Deactivate all tabs
                     tabButtons.forEach(btn => btn.classList.remove('active'));
                     tabContents.forEach(content => content.classList.remove('active'));
-
-
-                    // Activate selected tab
                     this.classList.add('active');
                     document.getElementById(tabName).classList.add('active');
+
+                    activeTab = tabName;
+
+                    if (tabName === 'jetdebug') {
+                        startDebugMode();
+                    } else {
+                        stopDebugMode();
+                    }
+
+                    if (tabName === 'modbus') {
+                        startModbusPolling();
+                    } else {
+                        stopModbusPolling();
+                    }
                 });
             });
         }
 
-
-        /**
-         * Initialize charts
-         */
         function initializeCharts() {
             const chartConfig = {
                 type: 'line',
@@ -778,10 +1073,7 @@
                             display: true,
                             labels: {
                                 color: '#667eea',
-                                font: {
-                                    size: 12,
-                                    weight: 'bold'
-                                }
+                                font: { size: 12, weight: 'bold' }
                             }
                         },
                         filler: true
@@ -811,7 +1103,6 @@
                 }
             };
 
-
             const jet_chartConfig = {
                 type: 'line',
                 options: {
@@ -822,10 +1113,7 @@
                             display: true,
                             labels: {
                                 color: '#667eea',
-                                font: {
-                                    size: 12,
-                                    weight: 'bold'
-                                }
+                                font: { size: 12, weight: 'bold' }
                             }
                         },
                         filler: true
@@ -833,7 +1121,6 @@
                     scales: {
                         y: {
                             beginAtZero: true,
-                            // max: 100,
                             ticks: {
                                 color: '#667eea',
                                 stepSize: 20
@@ -855,8 +1142,6 @@
                 }
             };
 
-
-            // CPU Chart
             cpuChart = new Chart(document.getElementById('cpuChart'), {
                 ...jet_chartConfig,
                 data: {
@@ -873,8 +1158,6 @@
                 }
             });
 
-
-            // Memory Chart
             memoryChart = new Chart(document.getElementById('memoryChart'), {
                 ...chartConfig,
                 data: {
@@ -891,8 +1174,6 @@
                 }
             });
 
-
-            // Jet Temp Chart
             tempChart = new Chart(document.getElementById('tempChart'), {
                 ...jet_chartConfig,
                 data: {
@@ -909,8 +1190,6 @@
                 }
             });
 
-
-            // Jet RPM Chart
             tempChart = new Chart(document.getElementById('rpmChart'), {
                 ...jet_chartConfig,
                 data: {
@@ -927,8 +1206,6 @@
                 }
             });
 
-
-            // Jet fuel Chart
             tempChart = new Chart(document.getElementById('fuelChart'), {
                 ...jet_chartConfig,
                 data: {
@@ -944,64 +1221,49 @@
                     }]
                 }
             });
+
+            // Debug Chart
+            debugState.debugChart = new Chart(document.getElementById('debugChart'), {
+                ...jet_chartConfig,
+                data: {
+                    labels: [],
+                    datasets: []
+                }
+            });
         }
 
-
-        /**
-         * Update charts with new data
-         */
         function updateCharts(cpuPercent, memoryPercent) {
             const now = new Date().toLocaleTimeString();
-
-
             chartData.cpu.push(cpuPercent);
             chartData.memory.push(memoryPercent);
             chartData.timestamps.push(now);
 
-
-            // Keep only last MAX_CHART_POINTS
             if (chartData.cpu.length > MAX_CHART_POINTS) {
                 chartData.cpu.shift();
                 chartData.memory.shift();
                 chartData.timestamps.shift();
             }
 
-
-            // Update CPU Chart
             cpuChart.data.labels = chartData.timestamps;
             cpuChart.data.datasets[0].data = chartData.cpu;
             cpuChart.update('none');
 
-
-            // Update Memory Chart
             memoryChart.data.labels = chartData.timestamps;
             memoryChart.data.datasets[0].data = chartData.memory;
             memoryChart.update('none');
         }
 
-
-        /**
-         * Initialize Modbus channels table
-         */
         function initializeChannelsTable() {
             const tbody = document.getElementById('channelsTableBody');
             tbody.innerHTML = '';
-
-
             for (let i = 0; i < 16; i++) {
                 const row = createChannelRow(i);
                 tbody.appendChild(row);
             }
         }
 
-
-        /**
-         * Create channel table row
-         */
         function createChannelRow(channelNumber) {
             const row = document.createElement('tr');
-            const channelKey = `chanel_${channelNumber}`;
-
 
             row.innerHTML = `
                 <td class="channel-name">CH${channelNumber}</td>
@@ -1028,26 +1290,19 @@
                 <td class="channel-value" id="pwm_${channelNumber}">1500</td>
             `;
 
-
             const slider = row.querySelector(`#slider_${channelNumber}`);
             const input = row.querySelector(`#input_${channelNumber}`);
             const button = row.querySelector(`#btn_${channelNumber}`);
 
-
-            // Slider event
             slider.addEventListener('input', function(e) {
                 const value = parseInt(this.value);
                 const channel = parseInt(this.dataset.channel);
-
-
                 document.getElementById(`slider-value_${channel}`).textContent = value;
                 document.getElementById(`pwm_${channel}`).textContent = percentToPWM(value);
-
 
                 if (sliderTimeouts[channel]) {
                     clearTimeout(sliderTimeouts[channel]);
                 }
-
 
                 sliderTimeouts[channel] = setTimeout(() => {
                     sendChannelValue(channel, value);
@@ -1055,8 +1310,6 @@
                 }, SLIDER_DEBOUNCE);
             });
 
-
-            // Input validation
             input.addEventListener('input', function(e) {
                 let value = parseInt(this.value) || 0;
                 if (value > 100) value = 100;
@@ -1065,16 +1318,12 @@
                 document.getElementById(`pwm_${channelNumber}`).textContent = percentToPWM(value);
             });
 
-
-            // Button click
             button.addEventListener('click', function() {
                 const channel = parseInt(this.dataset.channel);
                 const value = parseInt(input.value) || 0;
                 sendChannelValue(channel, value);
             });
 
-
-            // Enter key
             input.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     const channel = parseInt(this.dataset.channel);
@@ -1083,31 +1332,19 @@
                 }
             });
 
-
             return row;
         }
 
-
-        /**
-         * Send channel value to server
-         */
         async function sendChannelValue(channel, value) {
             try {
                 const response = await fetch(`${API_URL}/set_chanel`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        chanel: channel,
-                        data: value
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chanel: channel, data: value })
                 });
-
 
                 const data = await response.json();
                 modbusRequestCount++;
-
 
                 if (response.ok) {
                     showFeedback(`Channel ${channel} set to ${value}`, 'success');
@@ -1121,21 +1358,14 @@
                 showFeedback(`Connection error: ${error.message}`, 'error');
             }
 
-
             updateModbusStats();
         }
 
-
-        /**
-         * Fetch system data
-         */
         async function fetchSystemData() {
             try {
                 const response = await fetch(`${API_URL}/`);
                 const data = await response.json();
                 systemRequestCount++;
-
-
                 systemData = data;
                 updateSystemDisplay();
                 updateCharts(data.cpu_percent, data.memory_percent);
@@ -1144,14 +1374,9 @@
             } catch (error) {
                 isSystemConnected = false;
                 updateConnectionStatus(false, 'system');
-                console.error('System data fetch error:', error);
             }
         }
 
-
-        /**
-         * Update system display
-         */
         function updateSystemDisplay() {
             document.getElementById('cpuPercent').textContent = `${systemData.cpu_percent || 0}%`;
             document.getElementById('memoryPercent').textContent = `${systemData.memory_percent || 0}%`;
@@ -1163,45 +1388,27 @@
             document.getElementById('requestCount').textContent = systemRequestCount;
         }
 
-
-        /**
-         * Fetch Modbus data
-         */
         async function fetchModbusData() {
             try {
                 const response = await fetch(`${API_URL}/get_chanel`);
                 const data = await response.json();
                 modbusRequestCount++;
-
-
                 channelsData = data;
                 updateChannelsDisplay();
-                isModbusConnected = true;
-                updateConnectionStatus(true, 'modbus');
             } catch (error) {
-                isModbusConnected = false;
-                updateConnectionStatus(false, 'modbus');
-                console.error('Modbus data fetch error:', error);
+                console.error('Modbus fetch error:', error);
             }
-
 
             updateModbusStats();
         }
 
-
-        /**
-         * Update channels display
-         */
         function updateChannelsDisplay() {
             for (let i = 0; i < 16; i++) {
                 const channelKey = `chanel_${i}`;
                 const value = channelsData[channelKey] || 0;
-
-
                 const valueCell = document.getElementById(`value_${i}`);
                 valueCell.textContent = value;
                 valueCell.className = 'channel-value';
-
 
                 if (value > 0) {
                     valueCell.classList.add('value-positive');
@@ -1211,16 +1418,12 @@
                     valueCell.classList.add('value-zero');
                 }
 
-
                 document.getElementById(`pwm_${i}`).textContent = percentToPWM(value);
-
-
                 const slider = document.getElementById(`slider_${i}`);
                 if (!slider.dataset.userInteracting) {
                     slider.value = value;
                     document.getElementById(`slider-value_${i}`).textContent = value;
                 }
-
 
                 const input = document.getElementById(`input_${i}`);
                 if (document.activeElement !== input) {
@@ -1228,56 +1431,386 @@
                 }
             }
 
-
             const now = new Date();
-            document.getElementById('modbusLastUpdate').textContent = 
-                now.toLocaleTimeString('en-US');
+            document.getElementById('modbusLastUpdate').textContent = now.toLocaleTimeString('en-US');
         }
 
-
-        /**
-         * Update connection status
-         */
         function updateConnectionStatus(isConnected, type) {
             if (type === 'system') {
                 const statusElement = document.getElementById('connectionStatus');
                 statusElement.textContent = isConnected ? '🟢 Online' : '🔴 Offline';
                 statusElement.style.color = isConnected ? '#27ae60' : '#e74c3c';
-            } else if (type === 'modbus') {
-                const statusElement = document.getElementById('modbusStatus');
-                statusElement.textContent = isConnected ? '🟢 Online' : '🔴 Offline';
-                statusElement.style.color = isConnected ? '#27ae60' : '#e74c3c';
             }
         }
 
-
-        /**
-         * Update Modbus stats
-         */
         function updateModbusStats() {
             document.getElementById('modbusRequestCount').textContent = modbusRequestCount;
             document.getElementById('modbusErrorCount').textContent = modbusErrorCount;
         }
 
+        // ===== MODBUS STATUS UPDATE - ЕДИНСТВЕННЫЙ ИСТОЧНИК ДЛЯ СТАТУСА =====
+        function updateModbusStatusFromResponse(statusData) {
+            // Обновляем статус Modbus Channels табы
+            const statusElement = document.getElementById('modbusStatus');
+            const statusMap = {
+                'online': '🟢 Online',
+                'mb-offline': '🟠 Mb-Offline',
+                'total-offline': '🔴 Total-Offline'
+            };
+            
+            const newStatus = statusData.modbus_status || 'total-offline';
+            statusElement.textContent = statusMap[newStatus] || newStatus;
+            statusElement.style.color = newStatus === 'online' ? '#27ae60' : 
+                                       newStatus === 'mb-offline' ? '#f39c12' : '#e74c3c';
+        }
 
-        /**
-         * Show feedback message
-         */
         function showFeedback(message, type) {
             const feedbackElement = document.getElementById('feedbackMessage');
             feedbackElement.textContent = message;
             feedbackElement.className = `feedback-message ${type}`;
-
 
             setTimeout(() => {
                 feedbackElement.className = 'feedback-message';
             }, 3000);
         }
 
+        function showDebugFeedback(message, type) {
+            const feedbackElement = document.getElementById('debugFeedbackMessage');
+            feedbackElement.textContent = message;
+            feedbackElement.className = `feedback-message ${type}`;
 
-        /**
-         * Initialize everything
-         */
+            setTimeout(() => {
+                feedbackElement.className = 'feedback-message';
+            }, 3000);
+        }
+
+        // ===== MODBUS POLLING CONTROL =====
+        function startModbusPolling() {
+            if (!modbusInterval) {
+                fetchModbusData();
+                modbusInterval = setInterval(fetchModbusData, currentModbusRefreshInterval);
+            }
+        }
+
+        function stopModbusPolling() {
+            if (modbusInterval) {
+                clearInterval(modbusInterval);
+                modbusInterval = null;
+            }
+        }
+
+        function restartModbusPolling() {
+            stopModbusPolling();
+            if (activeTab === 'modbus') {
+                startModbusPolling();
+            }
+        }
+
+        // ===== DEBUG MODE FUNCTIONS =====
+        function initializeDebugMode() {
+            document.getElementById('debugStartAddr').addEventListener('change', function() {
+                debugState.startAddr = parseInt(this.value) || 0;
+                refreshDebugRegisters();
+            });
+
+            document.getElementById('debugQuantity').addEventListener('change', function() {
+                debugState.quantity = parseInt(this.value) || 1;
+                refreshDebugRegisters();
+            });
+
+            document.getElementById('debugInterval').addEventListener('change', function() {
+                debugState.interval = parseFloat(this.value) || 0.5;
+                currentModbusRefreshInterval = debugState.interval * 1000;
+                
+                if (debugState.debugInterval) {
+                    clearInterval(debugState.debugInterval);
+                    debugState.debugInterval = setInterval(() => {
+                        fetchDebugData();
+                    }, currentModbusRefreshInterval);
+                }
+                
+                if (activeTab === 'modbus') {
+                    restartModbusPolling();
+                }
+            });
+
+            document.querySelector('.logs-header').addEventListener('click', function() {
+                this.classList.toggle('collapsed');
+                document.getElementById('logsContent').classList.toggle('show');
+            });
+
+            document.getElementById('writeBtn').addEventListener('click', async function() {
+                const addr = parseInt(document.getElementById('writeAddr').value) || 0;
+                const value = parseInt(document.getElementById('writeValue').value) || 0;
+
+                if (value < 0 || value > 65535) {
+                    showDebugFeedback('Value must be 0-65535', 'error');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('jet_api/send_data', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ address: addr, value: value })
+                    });
+
+                    const data = await response.json();
+                    if (response.ok) {
+                        showDebugFeedback(`Wrote ${value} to register ${addr}`, 'success');
+                    } else {
+                        showDebugFeedback(`Error: ${data.message}`, 'error');
+                    }
+                } catch (error) {
+                    showDebugFeedback(`Error: ${error.message}`, 'error');
+                }
+            });
+
+            refreshDebugRegisters();
+        }
+
+        function refreshDebugRegisters() {
+            const grid = document.getElementById('registersGrid');
+            grid.innerHTML = '';
+
+            for (let i = 0; i < debugState.quantity; i++) {
+                const addr = debugState.startAddr + i;
+                const block = createRegisterBlock(addr);
+                grid.appendChild(block);
+            }
+        }
+
+        function createRegisterBlock(address) {
+            const block = document.createElement('div');
+            block.className = 'register-block';
+            block.innerHTML = `
+                <div class="register-header">
+                    <span class="register-address">${address}</span>
+                    <span class="register-address-hex">(0x${address.toString(16).toUpperCase()})</span>
+                </div>
+                <div class="register-body">
+                    <div class="register-value" id="reg-value-${address}">-</div>
+                    <select class="register-format-select" id="reg-format-${address}">
+                        <option value="decimal">Decimal</option>
+                        <option value="hex">Hexadecimal</option>
+                    </select>
+                    <div class="register-chart-checkbox">
+                        <input type="checkbox" id="reg-chart-${address}" data-address="${address}">
+                        <label for="reg-chart-${address}">Plot Chart</label>
+                    </div>
+                </div>
+            `;
+
+            const formatSelect = block.querySelector(`#reg-format-${address}`);
+            formatSelect.addEventListener('change', function() {
+                updateRegisterDisplay(address, formatSelect.value);
+            });
+
+            const chartCheckbox = block.querySelector(`#reg-chart-${address}`);
+            chartCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    debugState.selectedForChart.add(address);
+                } else {
+                    debugState.selectedForChart.delete(address);
+                }
+                updateDebugChart();
+                const container = document.getElementById('debugChartContainer');
+                container.classList.toggle('show', debugState.selectedForChart.size > 0);
+            });
+
+            return block;
+        }
+
+        function updateRegisterDisplay(address, format = 'decimal') {
+            const value = debugState.registers[address] || 0;
+            const displayValue = format === 'hex' ? `0x${value.toString(16).toUpperCase()}` : value;
+            document.getElementById(`reg-value-${address}`).textContent = displayValue;
+        }
+
+        async function fetchDebugData() {
+            try {
+                const response = await fetch('jet_api/get_data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        address: debugState.startAddr,
+                        quantity: debugState.quantity
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    for (let i = 0; i < data.registers.length; i++) {
+                        const addr = debugState.startAddr + i;
+                        debugState.registers[addr] = data.registers[i];
+
+                        if (!debugState.chartData[addr]) {
+                            debugState.chartData[addr] = [];
+                        }
+                        debugState.chartData[addr].push(data.registers[i]);
+
+                        if (debugState.chartData[addr].length > MAX_CHART_POINTS) {
+                            debugState.chartData[addr].shift();
+                        }
+
+                        const format = document.getElementById(`reg-format-${addr}`)?.value || 'decimal';
+                        updateRegisterDisplay(addr, format);
+                    }
+
+                    updateDebugChart();
+                }
+            } catch (error) {
+                console.error('Debug data fetch error:', error);
+            }
+        }
+
+        // ГЛАВНАЯ ФУНКЦИЯ - обновляет статус ТОЛЬКО отсюда
+        async function fetchDebugStatus() {
+            try {
+                const response = await fetch('jet_api/status', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Обновляем статус Modbus в табе Modbus Channels
+                    updateModbusStatusFromResponse(data);
+
+                    // Обновляем debug информацию
+                    debugState.modbusStatus = data.modbus_status || 'total-offline';
+                    debugState.lastPacketTime = new Date();
+                    debugState.avgResponseTime = data.avg_response_time_ms || 0;
+                    debugState.pollingRange = data.polling_range || '-';
+                    debugState.queueSize = data.queue_size || 0;
+                    debugState.cacheSize = data.cache_size || 0;
+                    debugState.activeRangesCount = data.active_ranges_count || 0;
+                    debugState.errorLogs = data.error_logs || [];
+
+                    updateDebugStatusUI();
+                }
+            } catch (error) {
+                debugState.modbusStatus = 'total-offline';
+                updateModbusStatusFromResponse({ modbus_status: 'total-offline' });
+                updateDebugStatusUI();
+            }
+        }
+
+        function updateDebugStatusUI() {
+            const statusEl = document.getElementById('debugStatus');
+            const statusMap = {
+                'online': '🟢 online',
+                'mb-offline': '🟠 mb-offline',
+                'total-offline': '🔴 total-offline'
+            };
+
+            statusEl.textContent = statusMap[debugState.modbusStatus] || debugState.modbusStatus;
+            statusEl.className = `value status-${debugState.modbusStatus}`;
+
+            const lastPacket = debugState.lastPacketTime 
+                ? debugState.lastPacketTime.toLocaleTimeString()
+                : '-';
+            document.getElementById('debugLastPacket').textContent = lastPacket;
+            document.getElementById('debugAvgTime').textContent = `${debugState.avgResponseTime.toFixed(2)} ms`;
+            document.getElementById('debugPollingRange').textContent = debugState.pollingRange;
+            document.getElementById('debugQueueSize').textContent = debugState.queueSize;
+            document.getElementById('debugCacheSize').textContent = debugState.cacheSize;
+            document.getElementById('debugActiveRanges').textContent = debugState.activeRangesCount;
+
+            updateDebugLogs(debugState.errorLogs);
+        }
+
+        function updateDebugLogs(logs) {
+            const logsContent = document.getElementById('logsContent');
+            logsContent.innerHTML = '';
+
+            logs.forEach(log => {
+                const line = document.createElement('div');
+                line.className = 'log-line';
+                
+                const isError = log.toLowerCase().includes('error');
+                line.innerHTML = `
+                    <span class="log-time">${log.split(']')[0]}]</span>
+                    <span class="${isError ? 'log-error' : 'log-info'}">${log.split('] ')[1] || log}</span>
+                `;
+                logsContent.appendChild(line);
+            });
+        }
+
+        function updateDebugChart() {
+            if (debugState.selectedForChart.size === 0) {
+                return;
+            }
+
+            const datasets = [];
+            const colors = [
+                '#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6',
+                '#1abc9c', '#34495e', '#e67e22', '#c0392b', '#8e44ad'
+            ];
+
+            const timestamps = [];
+            const maxLength = Math.max(...Array.from(debugState.selectedForChart).map(addr => 
+                (debugState.chartData[addr] || []).length
+            ), 0);
+
+            for (let i = 0; i < maxLength; i++) {
+                timestamps.push(i);
+            }
+
+            let colorIdx = 0;
+            debugState.selectedForChart.forEach(addr => {
+                const data = debugState.chartData[addr] || [];
+                datasets.push({
+                    label: `Reg ${addr} (0x${addr.toString(16).toUpperCase()})`,
+                    data: data,
+                    borderColor: colors[colorIdx % colors.length],
+                    backgroundColor: colors[colorIdx % colors.length] + '22',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: false
+                });
+                colorIdx++;
+            });
+
+            debugState.debugChart.data.labels = timestamps;
+            debugState.debugChart.data.datasets = datasets;
+            debugState.debugChart.update('none');
+        }
+
+        function startDebugMode() {
+            if (!debugState.debugInterval) {
+                initializeDebugMode();
+                
+                currentModbusRefreshInterval = debugState.interval * 1000;
+                
+                fetchDebugData();
+                debugState.debugInterval = setInterval(() => {
+                    fetchDebugData();
+                }, currentModbusRefreshInterval);
+
+                // Запуск polling статуса раз в секунду - ЕДИНСТВЕННЫЙ ИСТОЧНИК СТАТУСА
+                if (!debugState.statusInterval) {
+                    debugState.statusInterval = setInterval(() => {
+                        fetchDebugStatus();
+                    }, DEBUG_STATUS_INTERVAL);
+                }
+            }
+        }
+
+        function stopDebugMode() {
+            if (debugState.debugInterval) {
+                clearInterval(debugState.debugInterval);
+                debugState.debugInterval = null;
+            }
+            if (debugState.statusInterval) {
+                clearInterval(debugState.statusInterval);
+                debugState.statusInterval = null;
+            }
+        }
+
+        // ===== MAIN INIT =====
         function init() {
             console.log('🚀 Initializing System & Modbus Control Panel...');
             
@@ -1285,18 +1818,10 @@
             initializeCharts();
             initializeChannelsTable();
 
-
-            // Initial data fetch
             fetchSystemData();
-            fetchModbusData();
 
+            systemInterval = setInterval(fetchSystemData, SYSTEM_REFRESH_INTERVAL);
 
-            // Periodic updates
-            setInterval(fetchSystemData, SYSTEM_REFRESH_INTERVAL);
-            setInterval(fetchModbusData, MODBUS_REFRESH_INTERVAL);
-
-
-            // Slider interaction tracking
             document.querySelectorAll('.slider').forEach(slider => {
                 slider.addEventListener('mousedown', function() {
                     this.dataset.userInteracting = 'true';
@@ -1312,10 +1837,12 @@
                 });
             });
 
+            if (activeTab === 'modbus') {
+                startModbusPolling();
+            }
 
             console.log('✅ Initialization complete');
         }
-
 
         document.addEventListener('DOMContentLoaded', init);
     </script>
