@@ -12,6 +12,7 @@
             box-sizing: border-box;
         }
 
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -19,6 +20,7 @@
             padding: 20px;
             color: #333;
         }
+
 
         .container {
             max-width: 1600px;
@@ -29,6 +31,7 @@
             padding: 30px;
         }
 
+
         .header {
             text-align: center;
             margin-bottom: 30px;
@@ -36,16 +39,19 @@
             padding-bottom: 20px;
         }
 
+
         .header h1 {
             color: #667eea;
             font-size: 2.5em;
             margin-bottom: 10px;
         }
 
+
         .header p {
             color: #666;
             font-size: 1em;
         }
+
 
         .status-bar {
             display: grid;
@@ -57,6 +63,7 @@
             border-radius: 10px;
         }
 
+
         .status-item {
             background: white;
             padding: 15px;
@@ -64,6 +71,7 @@
             border-left: 4px solid #667eea;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
+
 
         .status-item label {
             font-weight: bold;
@@ -73,16 +81,19 @@
             margin-bottom: 5px;
         }
 
+
         .status-item .value {
             font-size: 1.2em;
             color: #333;
             font-weight: bold;
         }
 
+
         .status-item .unit {
             font-size: 0.8em;
             color: #999;
         }
+
 
         .tabs {
             display: flex;
@@ -91,6 +102,7 @@
             border-bottom: 2px solid #e0e0e0;
             flex-wrap: wrap;
         }
+
 
         .tab-button {
             padding: 12px 25px;
@@ -105,9 +117,11 @@
             border-radius: 8px 8px 0 0;
         }
 
+
         .tab-button:hover {
             background: #e0e0e0;
         }
+
 
         .tab-button.active {
             background: white;
@@ -115,14 +129,17 @@
             border-bottom-color: #667eea;
         }
 
+
         .tab-content {
             display: none;
         }
+
 
         .tab-content.active {
             display: block;
             animation: fadeIn 0.3s ease;
         }
+
 
         @keyframes fadeIn {
             from {
@@ -135,12 +152,14 @@
             }
         }
 
+
         .charts-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
             gap: 25px;
             margin-bottom: 30px;
         }
+
 
         .chart-container {
             background: white;
@@ -152,6 +171,7 @@
             min-height: 350px;
         }
 
+
         .chart-container h3 {
             color: #667eea;
             margin-bottom: 15px;
@@ -159,14 +179,17 @@
             text-align: center;
         }
 
+
         .chart-wrapper {
             position: relative;
             height: 300px;
         }
 
+
         .channels-section {
             margin-bottom: 30px;
         }
+
 
         .section-title {
             font-size: 1.8em;
@@ -175,6 +198,7 @@
             border-bottom: 2px solid #667eea;
             padding-bottom: 10px;
         }
+
 
         .channels-table {
             width: 100%;
@@ -185,11 +209,13 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
+
         .channels-table thead {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             font-weight: bold;
         }
+
 
         .channels-table th {
             padding: 18px;
@@ -197,25 +223,30 @@
             font-size: 0.95em;
         }
 
+
         .channels-table td {
             padding: 18px;
             border-bottom: 1px solid #e0e0e0;
         }
+
 
         .channels-table tbody tr:hover {
             background: #f5f5f5;
             transition: background 0.2s ease;
         }
 
+
         .channels-table tbody tr:last-child td {
             border-bottom: none;
         }
+
 
         .channel-name {
             font-weight: bold;
             color: #667eea;
             min-width: 80px;
         }
+
 
         .channel-value {
             text-align: center;
@@ -225,17 +256,21 @@
             min-width: 60px;
         }
 
+
         .value-positive {
             color: #27ae60;
         }
+
 
         .value-negative {
             color: #e74c3c;
         }
 
+
         .value-zero {
             color: #95a5a6;
         }
+
 
         .slider-container {
             display: flex;
@@ -244,6 +279,7 @@
             flex: 1;
             min-width: 200px;
         }
+
 
         .slider {
             flex: 1;
@@ -255,6 +291,7 @@
             appearance: none;
             cursor: pointer;
         }
+
 
         .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -268,9 +305,11 @@
             transition: box-shadow 0.2s ease;
         }
 
+
         .slider::-webkit-slider-thumb:hover {
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
+
 
         .slider::-moz-range-thumb {
             width: 18px;
@@ -283,9 +322,11 @@
             transition: box-shadow 0.2s ease;
         }
 
+
         .slider::-moz-range-thumb:hover {
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
+
 
         .slider-value {
             display: inline-block;
@@ -296,12 +337,14 @@
             color: #667eea;
         }
 
+
         .input-container {
             display: flex;
             gap: 8px;
             align-items: center;
             min-width: 180px;
         }
+
 
         .input-container input {
             width: 70px;
@@ -313,11 +356,13 @@
             transition: border-color 0.2s ease;
         }
 
+
         .input-container input:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
+
 
         .input-container input::-webkit-outer-spin-button,
         .input-container input::-webkit-inner-spin-button {
@@ -325,9 +370,11 @@
             margin: 0;
         }
 
+
         .input-container input[type=number] {
             -moz-appearance: textfield;
         }
+
 
         .btn-set {
             padding: 10px 18px;
@@ -342,14 +389,17 @@
             white-space: nowrap;
         }
 
+
         .btn-set:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
 
+
         .btn-set:active {
             transform: translateY(0);
         }
+
 
         .feedback-message {
             margin-top: 20px;
@@ -366,6 +416,7 @@
             min-width: 300px;
         }
 
+
         .feedback-message.success {
             background: #d4edda;
             color: #155724;
@@ -373,12 +424,14 @@
             display: block;
         }
 
+
         .feedback-message.error {
             background: #f8d7da;
             color: #721c24;
             border: 2px solid #f5c6cb;
             display: block;
         }
+
 
         @keyframes slideIn {
             from {
@@ -391,14 +444,17 @@
             }
         }
 
+
         @media (max-width: 1200px) {
             .charts-grid {
                 grid-template-columns: 1fr;
             }
 
+
             .channels-table {
                 font-size: 0.9em;
             }
+
 
             .channels-table th,
             .channels-table td {
@@ -406,48 +462,59 @@
             }
         }
 
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
             }
 
+
             .header h1 {
                 font-size: 1.8em;
             }
+
 
             .status-bar {
                 grid-template-columns: repeat(2, 1fr);
             }
 
+
             .channels-table {
                 font-size: 0.8em;
             }
+
 
             .channels-table th,
             .channels-table td {
                 padding: 8px;
             }
 
+
             .slider-container {
                 min-width: 100px;
             }
+
 
             .input-container {
                 flex-direction: column;
                 gap: 5px;
             }
 
+
             .input-container input {
                 width: 100%;
             }
+
 
             .btn-set {
                 width: 100%;
             }
 
+
             .tabs {
                 gap: 5px;
             }
+
 
             .tab-button {
                 padding: 10px 15px;
@@ -463,10 +530,13 @@
             <p>Real-time monitoring and control system</p>
         </div>
 
+
         <div class="tabs">
             <button class="tab-button active" data-tab="system">📊 System Metrics</button>
             <button class="tab-button" data-tab="modbus">🔧 Modbus Channels</button>
+            <button class="tab-button" data-tab="jetdata">🛩️ Jet Data</button>
         </div>
+
 
         <!-- System Metrics Tab -->
         <div id="system" class="tab-content active">
@@ -505,6 +575,7 @@
                 </div>
             </div>
 
+
             <div class="charts-grid">
                 <div class="chart-container">
                     <h3>CPU Usage History</h3>
@@ -520,6 +591,7 @@
                 </div>
             </div>
         </div>
+
 
         <!-- Modbus Channels Tab -->
         <div id="modbus" class="tab-content">
@@ -542,6 +614,7 @@
                 </div>
             </div>
 
+
             <div class="channels-section">
                 <h2 class="section-title">Channel Control</h2>
                 <table class="channels-table">
@@ -551,6 +624,7 @@
                             <th style="width: 80px;">Value</th>
                             <th>Slider</th>
                             <th style="width: 180px;">Direct Input</th>
+                            <th style="width: 80px;">PWM (µs)</th>
                         </tr>
                     </thead>
                     <tbody id="channelsTableBody">
@@ -559,9 +633,59 @@
                 </table>
             </div>
 
+
             <div class="feedback-message" id="feedbackMessage"></div>
         </div>
+
+
+        <!-- System Metrics Tab -->
+        <div id="jetdata" class="tab-content">
+            <div class="status-bar">
+                <div class="status-item">
+                    <label>Обороты</label>
+                    <div class="value" id="cpuPercent">-<span class="unit">rpm/s</span></div>
+                </div>
+                <div class="status-item">
+                    <label>Температура</label>
+                    <div class="value" id="cpuPercent">-<span class="unit">deg</span></div>
+                </div>
+                <div class="status-item">
+                    <label>Состояние</label>
+                    <div class="value" id="cpuPercent">-<span class="unit"></span></div>
+                </div>
+                <div class="status-item">
+                    <label>Потребление топлива</label>
+                    <div class="value" id="cpuPercent">-<span class="unit">gr/s</span></div>
+                </div>
+                
+
+
+            </div>
+
+
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>Температура</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="rpmChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>Обороты</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="tempChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>Потребление</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="fuelChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
 
     <script src="scripts/chart.min.js"></script>
     <script>
@@ -571,6 +695,7 @@
         const MODBUS_REFRESH_INTERVAL = 500; // ms
         const SLIDER_DEBOUNCE = 100; // ms
         const MAX_CHART_POINTS = 60;
+
 
         // State
         let systemData = {};
@@ -582,9 +707,11 @@
         let isSystemConnected = false;
         let isModbusConnected = false;
 
+
         // Chart instances
         let cpuChart = null;
         let memoryChart = null;
+
 
         // Chart data buffers
         let chartData = {
@@ -593,6 +720,24 @@
             timestamps: []
         };
 
+
+        let jetchartData = {
+            tepm: [],
+            rpm: [],
+            fuel: [],
+            timestamps: []
+        };
+
+
+        /**
+         * Convert percentage (-100 to 100) to PWM microseconds (500 to 2500)
+         */
+        function percentToPWM(percent) {
+            // -100 -> 500µs, 0 -> 1500µs, 100 -> 2500µs
+            return 1500 + (percent * 5);
+        }
+
+
         /**
          * Initialize tabs
          */
@@ -600,13 +745,16 @@
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
 
+
             tabButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const tabName = this.dataset.tab;
 
+
                     // Deactivate all tabs
                     tabButtons.forEach(btn => btn.classList.remove('active'));
                     tabContents.forEach(content => content.classList.remove('active'));
+
 
                     // Activate selected tab
                     this.classList.add('active');
@@ -614,6 +762,7 @@
                 });
             });
         }
+
 
         /**
          * Initialize charts
@@ -662,9 +811,54 @@
                 }
             };
 
+
+            const jet_chartConfig = {
+                type: 'line',
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: '#667eea',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        filler: true
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            // max: 100,
+                            ticks: {
+                                color: '#667eea',
+                                stepSize: 20
+                            },
+                            grid: {
+                                color: 'rgba(102, 126, 234, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#667eea',
+                                maxTicksLimit: 8
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            };
+
+
             // CPU Chart
             cpuChart = new Chart(document.getElementById('cpuChart'), {
-                ...chartConfig,
+                ...jet_chartConfig,
                 data: {
                     labels: [],
                     datasets: [{
@@ -678,6 +872,7 @@
                     }]
                 }
             });
+
 
             // Memory Chart
             memoryChart = new Chart(document.getElementById('memoryChart'), {
@@ -695,7 +890,62 @@
                     }]
                 }
             });
+
+
+            // Jet Temp Chart
+            tempChart = new Chart(document.getElementById('tempChart'), {
+                ...jet_chartConfig,
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'degC',
+                        data: [],
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                }
+            });
+
+
+            // Jet RPM Chart
+            tempChart = new Chart(document.getElementById('rpmChart'), {
+                ...jet_chartConfig,
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'RPM',
+                        data: [],
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                }
+            });
+
+
+            // Jet fuel Chart
+            tempChart = new Chart(document.getElementById('fuelChart'), {
+                ...jet_chartConfig,
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'gr/s',
+                        data: [],
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                }
+            });
         }
+
 
         /**
          * Update charts with new data
@@ -703,9 +953,11 @@
         function updateCharts(cpuPercent, memoryPercent) {
             const now = new Date().toLocaleTimeString();
 
+
             chartData.cpu.push(cpuPercent);
             chartData.memory.push(memoryPercent);
             chartData.timestamps.push(now);
+
 
             // Keep only last MAX_CHART_POINTS
             if (chartData.cpu.length > MAX_CHART_POINTS) {
@@ -714,16 +966,19 @@
                 chartData.timestamps.shift();
             }
 
+
             // Update CPU Chart
             cpuChart.data.labels = chartData.timestamps;
             cpuChart.data.datasets[0].data = chartData.cpu;
             cpuChart.update('none');
+
 
             // Update Memory Chart
             memoryChart.data.labels = chartData.timestamps;
             memoryChart.data.datasets[0].data = chartData.memory;
             memoryChart.update('none');
         }
+
 
         /**
          * Initialize Modbus channels table
@@ -732,11 +987,13 @@
             const tbody = document.getElementById('channelsTableBody');
             tbody.innerHTML = '';
 
+
             for (let i = 0; i < 16; i++) {
                 const row = createChannelRow(i);
                 tbody.appendChild(row);
             }
         }
+
 
         /**
          * Create channel table row
@@ -744,6 +1001,7 @@
         function createChannelRow(channelNumber) {
             const row = document.createElement('tr');
             const channelKey = `chanel_${channelNumber}`;
+
 
             row.innerHTML = `
                 <td class="channel-name">CH${channelNumber}</td>
@@ -767,22 +1025,29 @@
                                 data-channel="${channelNumber}">Send</button>
                     </div>
                 </td>
+                <td class="channel-value" id="pwm_${channelNumber}">1500</td>
             `;
+
 
             const slider = row.querySelector(`#slider_${channelNumber}`);
             const input = row.querySelector(`#input_${channelNumber}`);
             const button = row.querySelector(`#btn_${channelNumber}`);
+
 
             // Slider event
             slider.addEventListener('input', function(e) {
                 const value = parseInt(this.value);
                 const channel = parseInt(this.dataset.channel);
 
+
                 document.getElementById(`slider-value_${channel}`).textContent = value;
+                document.getElementById(`pwm_${channel}`).textContent = percentToPWM(value);
+
 
                 if (sliderTimeouts[channel]) {
                     clearTimeout(sliderTimeouts[channel]);
                 }
+
 
                 sliderTimeouts[channel] = setTimeout(() => {
                     sendChannelValue(channel, value);
@@ -790,13 +1055,16 @@
                 }, SLIDER_DEBOUNCE);
             });
 
+
             // Input validation
             input.addEventListener('input', function(e) {
                 let value = parseInt(this.value) || 0;
                 if (value > 100) value = 100;
                 if (value < -100) value = -100;
                 this.value = value;
+                document.getElementById(`pwm_${channelNumber}`).textContent = percentToPWM(value);
             });
+
 
             // Button click
             button.addEventListener('click', function() {
@@ -804,6 +1072,7 @@
                 const value = parseInt(input.value) || 0;
                 sendChannelValue(channel, value);
             });
+
 
             // Enter key
             input.addEventListener('keypress', function(e) {
@@ -814,8 +1083,10 @@
                 }
             });
 
+
             return row;
         }
+
 
         /**
          * Send channel value to server
@@ -833,8 +1104,10 @@
                     })
                 });
 
+
                 const data = await response.json();
                 modbusRequestCount++;
+
 
                 if (response.ok) {
                     showFeedback(`Channel ${channel} set to ${value}`, 'success');
@@ -848,8 +1121,10 @@
                 showFeedback(`Connection error: ${error.message}`, 'error');
             }
 
+
             updateModbusStats();
         }
+
 
         /**
          * Fetch system data
@@ -859,6 +1134,7 @@
                 const response = await fetch(`${API_URL}/`);
                 const data = await response.json();
                 systemRequestCount++;
+
 
                 systemData = data;
                 updateSystemDisplay();
@@ -871,6 +1147,7 @@
                 console.error('System data fetch error:', error);
             }
         }
+
 
         /**
          * Update system display
@@ -886,6 +1163,7 @@
             document.getElementById('requestCount').textContent = systemRequestCount;
         }
 
+
         /**
          * Fetch Modbus data
          */
@@ -894,6 +1172,7 @@
                 const response = await fetch(`${API_URL}/get_chanel`);
                 const data = await response.json();
                 modbusRequestCount++;
+
 
                 channelsData = data;
                 updateChannelsDisplay();
@@ -905,8 +1184,10 @@
                 console.error('Modbus data fetch error:', error);
             }
 
+
             updateModbusStats();
         }
+
 
         /**
          * Update channels display
@@ -916,9 +1197,11 @@
                 const channelKey = `chanel_${i}`;
                 const value = channelsData[channelKey] || 0;
 
+
                 const valueCell = document.getElementById(`value_${i}`);
                 valueCell.textContent = value;
                 valueCell.className = 'channel-value';
+
 
                 if (value > 0) {
                     valueCell.classList.add('value-positive');
@@ -928,11 +1211,16 @@
                     valueCell.classList.add('value-zero');
                 }
 
+
+                document.getElementById(`pwm_${i}`).textContent = percentToPWM(value);
+
+
                 const slider = document.getElementById(`slider_${i}`);
                 if (!slider.dataset.userInteracting) {
                     slider.value = value;
                     document.getElementById(`slider-value_${i}`).textContent = value;
                 }
+
 
                 const input = document.getElementById(`input_${i}`);
                 if (document.activeElement !== input) {
@@ -940,10 +1228,12 @@
                 }
             }
 
+
             const now = new Date();
             document.getElementById('modbusLastUpdate').textContent = 
                 now.toLocaleTimeString('en-US');
         }
+
 
         /**
          * Update connection status
@@ -960,6 +1250,7 @@
             }
         }
 
+
         /**
          * Update Modbus stats
          */
@@ -967,6 +1258,7 @@
             document.getElementById('modbusRequestCount').textContent = modbusRequestCount;
             document.getElementById('modbusErrorCount').textContent = modbusErrorCount;
         }
+
 
         /**
          * Show feedback message
@@ -976,10 +1268,12 @@
             feedbackElement.textContent = message;
             feedbackElement.className = `feedback-message ${type}`;
 
+
             setTimeout(() => {
                 feedbackElement.className = 'feedback-message';
             }, 3000);
         }
+
 
         /**
          * Initialize everything
@@ -991,13 +1285,16 @@
             initializeCharts();
             initializeChannelsTable();
 
+
             // Initial data fetch
             fetchSystemData();
             fetchModbusData();
 
+
             // Periodic updates
             setInterval(fetchSystemData, SYSTEM_REFRESH_INTERVAL);
             setInterval(fetchModbusData, MODBUS_REFRESH_INTERVAL);
+
 
             // Slider interaction tracking
             document.querySelectorAll('.slider').forEach(slider => {
@@ -1015,8 +1312,10 @@
                 });
             });
 
+
             console.log('✅ Initialization complete');
         }
+
 
         document.addEventListener('DOMContentLoaded', init);
     </script>
