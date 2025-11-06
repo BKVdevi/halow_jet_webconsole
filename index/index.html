@@ -1264,7 +1264,8 @@
             recordedData: [],
             recordStartTime: null,
             recordInterval: 500,
-            recordIntervalId: null
+            recordIntervalId: null,
+            recordFetchInterval: null
         };
 
         // Jet Data State
@@ -1392,6 +1393,60 @@
             return data;
         }
 
+        async function fetchJetDataForRecording() {
+            try {
+                const response = await fetch('jet_api/get_data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ address: 50, quantity: 12 })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    for (let i = 0; i < data.registers.length; i++) {
+                        const addr = 50 + i;
+                        jetDataState.registers[addr] = data.registers[i];
+
+                        if (!jetDataState.chartData[addr]) {
+                            jetDataState.chartData[addr] = [];
+                        }
+                        const chartValue = getChartValue(addr, data.registers[i]);
+                        jetDataState.chartData[addr].push(chartValue);
+
+                        if (jetDataState.chartData[addr].length > MAX_CHART_POINTS) {
+                            jetDataState.chartData[addr].shift();
+                        }
+                    }
+
+                    if (activeTab === 'jetdata') {
+                        updateJetDataDisplay();
+                        updateJetDataChart();
+                    }
+                    
+                    jetDataState.lastPacketTime = new Date();
+                    updateJetDataStatus();
+                }
+            } catch (error) {
+                console.error('Recording fetch error:', error);
+            }
+        }
+
+        function updateJetDataDisplay() {
+            for (let addr = 50; addr <= 61; addr++) {
+                if ([53, 54, 61].includes(addr)) continue;
+                
+                const value = jetDataState.registers[addr];
+                if (value !== undefined) {
+                    const displayValue = formatJetDataValue(addr, value);
+                    const element = document.getElementById(`jet-value-${addr}`);
+                    if (element) {
+                        element.textContent = displayValue;
+                    }
+                }
+            }
+        }
+
         function startRecording() {
             recordingState.isRecording = true;
             recordingState.recordStartTime = Date.now();
@@ -1402,24 +1457,52 @@
             document.getElementById('recordingRows').textContent = '0';
             document.getElementById('recordingTime').textContent = '00:00';
 
-            recordingState.recordIntervalId = setInterval(() => {
-                if (recordingState.isRecording && Object.keys(jetDataState.registers).length > 0) {
-                    const data = getFormattedJetData();
-                    recordingState.recordedData.push(data);
-                    document.getElementById('recordingRows').textContent = recordingState.recordedData.length;
+            // Один интервал для ОПРОСА И ЗАПИСИ одновременно
+            recordingState.recordFetchInterval = setInterval(async () => {
+                if (recordingState.isRecording) {
+                    // Опрос данных
+                    await fetchJetDataForRecording();
                     
-                    const elapsed = Math.floor((Date.now() - recordingState.recordStartTime) / 1000);
-                    const mins = Math.floor(elapsed / 60);
-                    const secs = elapsed % 60;
-                    document.getElementById('recordingTime').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+                    // Запись (сразу после опроса, пока данные свежие)
+                    if (Object.keys(jetDataState.registers).length > 0) {
+                        const data = getFormattedJetData();
+                        recordingState.recordedData.push(data);
+                        document.getElementById('recordingRows').textContent = recordingState.recordedData.length;
+                        
+                        const elapsed = Math.floor((Date.now() - recordingState.recordStartTime) / 1000);
+                        const mins = Math.floor(elapsed / 60);
+                        const secs = elapsed % 60;
+                        document.getElementById('recordingTime').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+                    }
                 }
-            }, recordingState.recordInterval);
+            }, recordingState.recordInterval);  // ← ИСПОЛЬЗУЕМ ВЫБРАННЫЙ ИНТЕРВАЛ
+        }
+
+        function stopRecording() {
+            recordingState.isRecording = false;
+            if (recordingState.recordFetchInterval) {
+                clearInterval(recordingState.recordFetchInterval);
+                recordingState.recordFetchInterval = null;
+            }
+            // recordIntervalId больше не используется!
+            if (recordingState.recordIntervalId) {
+                clearInterval(recordingState.recordIntervalId);
+                recordingState.recordIntervalId = null;
+            }
+            document.getElementById('recordingStatus').textContent = 'stopped';
+            document.getElementById('recordStartBtn').disabled = false;
+            document.getElementById('recordStopBtn').disabled = true;
         }
 
         function stopRecording() {
             recordingState.isRecording = false;
             if (recordingState.recordIntervalId) {
                 clearInterval(recordingState.recordIntervalId);
+                recordingState.recordIntervalId = null;
+            }
+            if (recordingState.recordFetchInterval) {
+                clearInterval(recordingState.recordFetchInterval);
+                recordingState.recordFetchInterval = null;
             }
             document.getElementById('recordingStatus').textContent = 'stopped';
             document.getElementById('recordStartBtn').disabled = false;
@@ -1926,8 +2009,20 @@
                 updateJetDataChart();
             });
 
-            document.getElementById('recordIntervalInput').addEventListener('change', function() {
+            document.getElementById('recordIntervalInput').addEventListener('input', function() {
                 recordingState.recordInterval = parseInt(this.value) || 500;
+                
+                // Если запись идёт, перезапустить интервал опроса
+                if (recordingState.isRecording) {
+                    if (recordingState.recordFetchInterval) {
+                        clearInterval(recordingState.recordFetchInterval);
+                    }
+                    recordingState.recordFetchInterval = setInterval(async () => {
+                        if (recordingState.isRecording) {
+                            await fetchJetDataForRecording();
+                        }
+                    }, recordingState.recordInterval);
+                }
             });
 
             document.getElementById('recordStartBtn').addEventListener('click', startRecording);
@@ -1994,14 +2089,12 @@
                         if (jetDataState.chartData[addr].length > MAX_CHART_POINTS) {
                             jetDataState.chartData[addr].shift();
                         }
-
-                        const displayValue = formatJetDataValue(addr, data.registers[i]);
-                        const element = document.getElementById(`jet-value-${addr}`);
-                        if (element) {
-                            element.textContent = displayValue;
-                        }
                     }
 
+                    if (activeTab === 'jetdata' && !recordingState.isRecording) {
+                        updateJetDataDisplay();
+                    }
+                    
                     jetDataState.lastPacketTime = new Date();
                     updateJetDataStatus();
                     updateJetDataChart();
