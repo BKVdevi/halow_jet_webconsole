@@ -790,6 +790,146 @@
             font-size: 0.9em;
         }
 
+        /* Data Recording Control */
+        .data-control-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+        }
+
+        .control-title {
+            font-size: 1.2em;
+            color: #667eea;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .control-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .control-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-label {
+            font-weight: bold;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        .control-value {
+            font-size: 1em;
+            color: #667eea;
+            font-weight: bold;
+            min-width: 80px;
+        }
+
+        .btn-control {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.95em;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            white-space: nowrap;
+        }
+
+        .btn-start {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+        }
+
+        .btn-stop {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-stop:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+        }
+
+        .btn-clear {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-clear:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4);
+        }
+
+        .btn-download {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-mark {
+            background: #9b59b6;
+            color: white;
+        }
+
+        .btn-mark:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(155, 89, 182, 0.4);
+        }
+
+        .input-number-small {
+            padding: 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.9em;
+            width: 100px;
+            text-align: center;
+        }
+
+        .input-number-small:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .mark-input-container {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .mark-input-container input {
+            padding: 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.9em;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .mark-input-container input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
         @media (max-width: 768px) {
             .registers-grid {
                 grid-template-columns: 1fr;
@@ -813,6 +953,10 @@
 
             .range-slider {
                 width: 100%;
+            }
+
+            .control-row {
+                flex-direction: column;
             }
         }
 
@@ -958,6 +1102,45 @@
                     <canvas id="jetDataChart"></canvas>
                 </div>
             </div>
+
+            <!-- Data Control Section -->
+            <div class="data-control-section">
+                <div class="control-title">📝 Data Recording Control</div>
+                
+                <div class="control-row">
+                    <div class="control-item">
+                        <span class="control-label">Status:</span>
+                        <span class="control-value" id="recordingStatus">stopped</span>
+                    </div>
+                    <div class="control-item">
+                        <span class="control-label">Rows:</span>
+                        <span class="control-value" id="recordingRows">0</span>
+                    </div>
+                    <div class="control-item">
+                        <span class="control-label">Time:</span>
+                        <span class="control-value" id="recordingTime">00:00</span>
+                    </div>
+                </div>
+
+                <div class="control-row">
+                    <button class="btn-control btn-start" id="recordStartBtn">▶ Start</button>
+                    <button class="btn-control btn-stop" id="recordStopBtn" disabled>⏹ Stop</button>
+                    <button class="btn-control btn-clear" id="recordClearBtn">🗑 Clear</button>
+                    <button class="btn-control btn-download" id="recordDownloadBtn">💾 Download</button>
+                </div>
+
+                <div class="control-row">
+                    <div class="control-label">Interval (ms):</div>
+                    <input type="number" id="recordIntervalInput" class="input-number-small" value="500" min="100" max="10000" step="100">
+                </div>
+
+                <div class="control-row">
+                    <div class="mark-input-container">
+                        <input type="text" id="markCommentInput" placeholder="Mark comment (default: point)" value="point">
+                        <button class="btn-control btn-mark" id="recordMarkBtn">📍 Add Mark</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Jet Modbus Debug Tab -->
@@ -1075,6 +1258,15 @@
         let isModbusConnected = false;
         let activeTab = 'system';
 
+        // Recording State
+        let recordingState = {
+            isRecording: false,
+            recordedData: [],
+            recordStartTime: null,
+            recordInterval: 500,
+            recordIntervalId: null
+        };
+
         // Jet Data State
         let jetDataState = {
             registers: {},
@@ -1150,10 +1342,138 @@
         }
 
         function getChartValue(address, value) {
-            if (address === 56) return value / 10;      // Температура
-            if (address === 57) return value / 1000;    // Напряжение (В)
-            if (address === 58) return value / 1000;    // Ток (A)
+            if (address === 56) return value / 10;
+            if (address === 57) return value / 1000;
+            if (address === 58) return value / 1000;
             return value;
+        }
+
+        function formatJetDataValue(address, value) {
+            if (address === 50) {
+                const status = jetDataState.statusMap[value] || 'unknown';
+                return `${value} (${status})`;
+            } else if (address === 51 || address === 52) {
+                return value > 0 ? `✓ ${value}` : `✗ 0`;
+            } else if (address === 56) {
+                return `${(value / 10).toFixed(1)}`;
+            } else if (address === 57) {
+                return `${(value / 1000).toFixed(2)}`;
+            } else if (address === 58) {
+                return `${(value / 1000).toFixed(2)}`;
+            }
+            return value.toString();
+        }
+
+        function getFormattedJetData() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                systime: new Date().toLocaleTimeString()
+            };
+
+            if (recordingState.recordStartTime) {
+                const elapsed = Math.floor((Date.now() - recordingState.recordStartTime) / 1000);
+                const mins = Math.floor(elapsed / 60);
+                const secs = elapsed % 60;
+                data.elapsed = `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+
+            [50, 51, 52, 55, 56, 57, 58, 59, 60].forEach(addr => {
+                const value = jetDataState.registers[addr];
+                if (value !== undefined) {
+                    let formattedValue = value;
+                    if (addr === 56 || addr === 57 || addr === 58) {
+                        formattedValue = getChartValue(addr, value);
+                    }
+                    const name = jetDataState.registerNames[addr];
+                    data[name] = formattedValue;
+                }
+            });
+
+            return data;
+        }
+
+        function startRecording() {
+            recordingState.isRecording = true;
+            recordingState.recordStartTime = Date.now();
+            recordingState.recordedData = [];
+            document.getElementById('recordingStatus').textContent = 'running';
+            document.getElementById('recordStartBtn').disabled = true;
+            document.getElementById('recordStopBtn').disabled = false;
+            document.getElementById('recordingRows').textContent = '0';
+            document.getElementById('recordingTime').textContent = '00:00';
+
+            recordingState.recordIntervalId = setInterval(() => {
+                if (recordingState.isRecording && Object.keys(jetDataState.registers).length > 0) {
+                    const data = getFormattedJetData();
+                    recordingState.recordedData.push(data);
+                    document.getElementById('recordingRows').textContent = recordingState.recordedData.length;
+                    
+                    const elapsed = Math.floor((Date.now() - recordingState.recordStartTime) / 1000);
+                    const mins = Math.floor(elapsed / 60);
+                    const secs = elapsed % 60;
+                    document.getElementById('recordingTime').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+                }
+            }, recordingState.recordInterval);
+        }
+
+        function stopRecording() {
+            recordingState.isRecording = false;
+            if (recordingState.recordIntervalId) {
+                clearInterval(recordingState.recordIntervalId);
+            }
+            document.getElementById('recordingStatus').textContent = 'stopped';
+            document.getElementById('recordStartBtn').disabled = false;
+            document.getElementById('recordStopBtn').disabled = true;
+        }
+
+        function clearRecording() {
+            stopRecording();
+            recordingState.recordedData = [];
+            recordingState.recordStartTime = null;
+            document.getElementById('recordingRows').textContent = '0';
+            document.getElementById('recordingTime').textContent = '00:00';
+        }
+
+        function addMark() {
+            const comment = document.getElementById('markCommentInput').value || 'point';
+            const mark = {
+                type: 'MARK',
+                timestamp: new Date().toISOString(),
+                systime: new Date().toLocaleTimeString(),
+                comment: comment
+            };
+
+            if (recordingState.recordStartTime) {
+                const elapsed = Math.floor((Date.now() - recordingState.recordStartTime) / 1000);
+                const mins = Math.floor(elapsed / 60);
+                const secs = elapsed % 60;
+                mark.elapsed = `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+
+            recordingState.recordedData.push(mark);
+            document.getElementById('recordingRows').textContent = recordingState.recordedData.length;
+        }
+
+        function downloadRecording() {
+            if (recordingState.recordedData.length === 0) {
+                alert('No data to download');
+                return;
+            }
+
+            let content = '';
+            recordingState.recordedData.forEach(row => {
+                content += JSON.stringify(row) + '\n';
+            });
+
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'jet_data.md';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
         }
 
         function initializeTabs() {
@@ -1178,7 +1498,7 @@
 
                     if (tabName === 'jetdata') {
                         startJetDataMode();
-                    } else {
+                    } else if (!recordingState.isRecording) {
                         stopJetDataMode();
                     }
 
@@ -1303,7 +1623,6 @@
                 }
             });
 
-            // Jet Data Chart
             jetDataState.jetDataChart = new Chart(document.getElementById('jetDataChart'), {
                 ...jet_chartConfig,
                 data: {
@@ -1312,7 +1631,6 @@
                 }
             });
 
-            // Debug Chart
             debugState.debugChart = new Chart(document.getElementById('debugChart'), {
                 ...jet_chartConfig,
                 data: {
@@ -1596,6 +1914,8 @@
             container.innerHTML = '';
 
             for (let addr = 50; addr <= 61; addr++) {
+                if ([53, 54, 61].includes(addr)) continue;
+                
                 const block = createJetDataBlock(addr);
                 container.appendChild(block);
             }
@@ -1605,6 +1925,16 @@
                 document.getElementById('jetDataChartRangeValue').textContent = `${this.value}%`;
                 updateJetDataChart();
             });
+
+            document.getElementById('recordIntervalInput').addEventListener('change', function() {
+                recordingState.recordInterval = parseInt(this.value) || 500;
+            });
+
+            document.getElementById('recordStartBtn').addEventListener('click', startRecording);
+            document.getElementById('recordStopBtn').addEventListener('click', stopRecording);
+            document.getElementById('recordClearBtn').addEventListener('click', clearRecording);
+            document.getElementById('recordDownloadBtn').addEventListener('click', downloadRecording);
+            document.getElementById('recordMarkBtn').addEventListener('click', addMark);
         }
 
         function createJetDataBlock(address) {
@@ -1640,22 +1970,6 @@
             return block;
         }
 
-        function formatJetDataValue(address, value) {
-            if (address === 50) {
-                const status = jetDataState.statusMap[value] || 'unknown';
-                return `${value} (${status})`;
-            } else if (address === 51 || address === 52) {
-                return value > 0 ? `✓ ${value}` : `✗ 0`;
-            } else if (address === 56) {
-                return `${(value / 10).toFixed(1)}`;
-            } else if (address === 57) {
-                return `${(value / 1000).toFixed(2)}`;
-            } else if (address === 58) {
-                return `${(value / 1000).toFixed(2)}`;
-            }
-            return value.toString();
-        }
-
         async function fetchJetData() {
             try {
                 const response = await fetch('jet_api/get_data', {
@@ -1682,7 +1996,10 @@
                         }
 
                         const displayValue = formatJetDataValue(addr, data.registers[i]);
-                        document.getElementById(`jet-value-${addr}`).textContent = displayValue;
+                        const element = document.getElementById(`jet-value-${addr}`);
+                        if (element) {
+                            element.textContent = displayValue;
+                        }
                     }
 
                     jetDataState.lastPacketTime = new Date();
@@ -1761,7 +2078,7 @@
         }
 
         function stopJetDataMode() {
-            if (jetDataState.jetDataInterval) {
+            if (jetDataState.jetDataInterval && !recordingState.isRecording) {
                 clearInterval(jetDataState.jetDataInterval);
                 jetDataState.jetDataInterval = null;
             }
