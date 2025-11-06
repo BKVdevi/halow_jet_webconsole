@@ -639,6 +639,34 @@
             height: 400px;
         }
 
+        .chart-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .chart-controls label {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 0.9em;
+        }
+
+        .range-slider {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .range-value {
+            font-weight: bold;
+            color: #333;
+            min-width: 80px;
+            text-align: center;
+        }
+
         .write-section {
             background: white;
             border-radius: 10px;
@@ -706,6 +734,62 @@
             transform: translateY(0);
         }
 
+        .jet-data-blocks {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .jet-data-block {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 2px solid #e0e0e0;
+        }
+
+        .jet-data-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 15px;
+            font-weight: bold;
+            font-size: 0.95em;
+        }
+
+        .jet-data-body {
+            padding: 15px;
+        }
+
+        .jet-data-value {
+            text-align: center;
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .jet-data-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            justify-content: center;
+        }
+
+        .jet-data-checkbox input {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .jet-data-checkbox label {
+            cursor: pointer;
+            margin: 0;
+            font-size: 0.9em;
+        }
+
         @media (max-width: 768px) {
             .registers-grid {
                 grid-template-columns: 1fr;
@@ -717,6 +801,18 @@
 
             .write-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .jet-data-blocks {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-controls {
+                flex-direction: column;
+            }
+
+            .range-slider {
+                width: 100%;
             }
         }
 
@@ -840,41 +936,26 @@
         <div id="jetdata" class="tab-content">
             <div class="status-bar">
                 <div class="status-item">
-                    <label>Обороты</label>
-                    <div class="value" id="cpuPercent">-<span class="unit">rpm/s</span></div>
+                    <label>Service Status</label>
+                    <div class="value" id="jetDataStatus">🔴 offline</div>
                 </div>
                 <div class="status-item">
-                    <label>Температура</label>
-                    <div class="value" id="cpuPercent">-<span class="unit">deg</span></div>
-                </div>
-                <div class="status-item">
-                    <label>Состояние</label>
-                    <div class="value" id="cpuPercent">-<span class="unit"></span></div>
-                </div>
-                <div class="status-item">
-                    <label>Потребление топлива</label>
-                    <div class="value" id="cpuPercent">-<span class="unit">gr/s</span></div>
+                    <label>Last Packet</label>
+                    <div class="value" id="jetDataLastPacket">-</div>
                 </div>
             </div>
 
-            <div class="charts-grid">
-                <div class="chart-container">
-                    <h3>Температура</h3>
-                    <div class="chart-wrapper">
-                        <canvas id="rpmChart"></canvas>
-                    </div>
+            <div class="jet-data-blocks" id="jetDataBlocksContainer"></div>
+
+            <div class="debug-chart-container" id="jetDataChartContainer">
+                <h3 style="color: #667eea; margin-bottom: 15px;">Data Trends</h3>
+                <div class="chart-controls">
+                    <label>Time Range:</label>
+                    <input type="range" class="range-slider" id="jetDataChartRange" min="0" max="100" value="100">
+                    <span class="range-value" id="jetDataChartRangeValue">100%</span>
                 </div>
-                <div class="chart-container">
-                    <h3>Обороты</h3>
-                    <div class="chart-wrapper">
-                        <canvas id="tempChart"></canvas>
-                    </div>
-                </div>
-                <div class="chart-container">
-                    <h3>Потребление</h3>
-                    <div class="chart-wrapper">
-                        <canvas id="fuelChart"></canvas>
-                    </div>
+                <div class="debug-chart-wrapper">
+                    <canvas id="jetDataChart"></canvas>
                 </div>
             </div>
         </div>
@@ -977,6 +1058,7 @@
         const API_URL = '/api';
         const SYSTEM_REFRESH_INTERVAL = 1000;
         const DEBUG_STATUS_INTERVAL = 1000;
+        const JET_DATA_REFRESH_INTERVAL = 500;
         const SLIDER_DEBOUNCE = 100;
         const MAX_CHART_POINTS = 60;
 
@@ -993,7 +1075,41 @@
         let isModbusConnected = false;
         let activeTab = 'system';
 
-        // Debug state - ВАЖНО: статус обновляется ТОЛЬКО из status запросов
+        // Jet Data State
+        let jetDataState = {
+            registers: {},
+            chartData: {},
+            selectedForChart: new Set(),
+            jetDataChart: null,
+            jetDataInterval: null,
+            lastPacketTime: null,
+            chartRangePercent: 100,
+            registerNames: {
+                50: 'Статус',
+                51: 'Привод стартера',
+                52: 'Привод помпы',
+                55: 'Свеча накала',
+                56: 'Температура',
+                57: 'Напряжение батареи (В)',
+                58: 'Ток потребления (A)',
+                59: 'Обороты двигателя (RPM)',
+                60: 'PWM сигнал'
+            },
+            statusMap: {
+                112: 'cooling-active',
+                111: 'cooling-wait',
+                100: 'force-cooling',
+                130: 'idle',
+                140: 'prearm',
+                150: 'arm-start',
+                5: 'preheat',
+                7: 'ignition-init',
+                10: 'ignition-start',
+                20: 'chamber-heat'
+            }
+        };
+
+        // Debug state
         let debugState = {
             startAddr: 0,
             quantity: 100,
@@ -1004,7 +1120,7 @@
             debugChart: null,
             debugInterval: null,
             statusInterval: null,
-            modbusStatus: 'total-offline',  // Только из status запроса
+            modbusStatus: 'total-offline',
             lastPacketTime: null,
             avgResponseTime: 0,
             pollingRange: '-',
@@ -1033,6 +1149,13 @@
             return 1500 + (percent * 5);
         }
 
+        function getChartValue(address, value) {
+            if (address === 56) return value / 10;      // Температура
+            if (address === 57) return value / 1000;    // Напряжение (В)
+            if (address === 58) return value / 1000;    // Ток (A)
+            return value;
+        }
+
         function initializeTabs() {
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
@@ -1051,6 +1174,12 @@
                         startDebugMode();
                     } else {
                         stopDebugMode();
+                    }
+
+                    if (tabName === 'jetdata') {
+                        startJetDataMode();
+                    } else {
+                        stopJetDataMode();
                     }
 
                     if (tabName === 'modbus') {
@@ -1174,51 +1303,12 @@
                 }
             });
 
-            tempChart = new Chart(document.getElementById('tempChart'), {
+            // Jet Data Chart
+            jetDataState.jetDataChart = new Chart(document.getElementById('jetDataChart'), {
                 ...jet_chartConfig,
                 data: {
                     labels: [],
-                    datasets: [{
-                        label: 'degC',
-                        data: [],
-                        borderColor: '#3498db',
-                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        fill: true
-                    }]
-                }
-            });
-
-            tempChart = new Chart(document.getElementById('rpmChart'), {
-                ...jet_chartConfig,
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'RPM',
-                        data: [],
-                        borderColor: '#3498db',
-                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        fill: true
-                    }]
-                }
-            });
-
-            tempChart = new Chart(document.getElementById('fuelChart'), {
-                ...jet_chartConfig,
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'gr/s',
-                        data: [],
-                        borderColor: '#3498db',
-                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        fill: true
-                    }]
+                    datasets: []
                 }
             });
 
@@ -1395,8 +1485,12 @@
                 modbusRequestCount++;
                 channelsData = data;
                 updateChannelsDisplay();
+                isModbusConnected = true;
+                updateModbusStatusDisplay();
             } catch (error) {
                 console.error('Modbus fetch error:', error);
+                isModbusConnected = false;
+                updateModbusStatusDisplay();
             }
 
             updateModbusStats();
@@ -1443,25 +1537,15 @@
             }
         }
 
+        function updateModbusStatusDisplay() {
+            const statusElement = document.getElementById('modbusStatus');
+            statusElement.textContent = isModbusConnected ? '🟢 Online' : '🔴 Offline';
+            statusElement.style.color = isModbusConnected ? '#27ae60' : '#e74c3c';
+        }
+
         function updateModbusStats() {
             document.getElementById('modbusRequestCount').textContent = modbusRequestCount;
             document.getElementById('modbusErrorCount').textContent = modbusErrorCount;
-        }
-
-        // ===== MODBUS STATUS UPDATE - ЕДИНСТВЕННЫЙ ИСТОЧНИК ДЛЯ СТАТУСА =====
-        function updateModbusStatusFromResponse(statusData) {
-            // Обновляем статус Modbus Channels табы
-            const statusElement = document.getElementById('modbusStatus');
-            const statusMap = {
-                'online': '🟢 Online',
-                'mb-offline': '🟠 Mb-Offline',
-                'total-offline': '🔴 Total-Offline'
-            };
-            
-            const newStatus = statusData.modbus_status || 'total-offline';
-            statusElement.textContent = statusMap[newStatus] || newStatus;
-            statusElement.style.color = newStatus === 'online' ? '#27ae60' : 
-                                       newStatus === 'mb-offline' ? '#f39c12' : '#e74c3c';
         }
 
         function showFeedback(message, type) {
@@ -1503,6 +1587,183 @@
             stopModbusPolling();
             if (activeTab === 'modbus') {
                 startModbusPolling();
+            }
+        }
+
+        // ===== JET DATA FUNCTIONS =====
+        function initializeJetDataMode() {
+            const container = document.getElementById('jetDataBlocksContainer');
+            container.innerHTML = '';
+
+            for (let addr = 50; addr <= 61; addr++) {
+                const block = createJetDataBlock(addr);
+                container.appendChild(block);
+            }
+
+            document.getElementById('jetDataChartRange').addEventListener('input', function() {
+                jetDataState.chartRangePercent = parseInt(this.value);
+                document.getElementById('jetDataChartRangeValue').textContent = `${this.value}%`;
+                updateJetDataChart();
+            });
+        }
+
+        function createJetDataBlock(address) {
+            const block = document.createElement('div');
+            block.className = 'jet-data-block';
+            
+            const name = jetDataState.registerNames[address] || `Регистр ${address}`;
+            const isChecked = jetDataState.selectedForChart.has(address) ? 'checked' : '';
+            
+            block.innerHTML = `
+                <div class="jet-data-header">${name}</div>
+                <div class="jet-data-body">
+                    <div class="jet-data-value" id="jet-value-${address}">-</div>
+                    <div class="jet-data-checkbox">
+                        <input type="checkbox" id="jet-chart-${address}" data-address="${address}" ${isChecked}>
+                        <label for="jet-chart-${address}">График</label>
+                    </div>
+                </div>
+            `;
+
+            const chartCheckbox = block.querySelector(`#jet-chart-${address}`);
+            chartCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    jetDataState.selectedForChart.add(address);
+                } else {
+                    jetDataState.selectedForChart.delete(address);
+                }
+                updateJetDataChart();
+                const container = document.getElementById('jetDataChartContainer');
+                container.classList.toggle('show', jetDataState.selectedForChart.size > 0);
+            });
+
+            return block;
+        }
+
+        function formatJetDataValue(address, value) {
+            if (address === 50) {
+                const status = jetDataState.statusMap[value] || 'unknown';
+                return `${value} (${status})`;
+            } else if (address === 51 || address === 52) {
+                return value > 0 ? `✓ ${value}` : `✗ 0`;
+            } else if (address === 56) {
+                return `${(value / 10).toFixed(1)}`;
+            } else if (address === 57) {
+                return `${(value / 1000).toFixed(2)}`;
+            } else if (address === 58) {
+                return `${(value / 1000).toFixed(2)}`;
+            }
+            return value.toString();
+        }
+
+        async function fetchJetData() {
+            try {
+                const response = await fetch('jet_api/get_data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ address: 50, quantity: 12 })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    for (let i = 0; i < data.registers.length; i++) {
+                        const addr = 50 + i;
+                        jetDataState.registers[addr] = data.registers[i];
+
+                        if (!jetDataState.chartData[addr]) {
+                            jetDataState.chartData[addr] = [];
+                        }
+                        const chartValue = getChartValue(addr, data.registers[i]);
+                        jetDataState.chartData[addr].push(chartValue);
+
+                        if (jetDataState.chartData[addr].length > MAX_CHART_POINTS) {
+                            jetDataState.chartData[addr].shift();
+                        }
+
+                        const displayValue = formatJetDataValue(addr, data.registers[i]);
+                        document.getElementById(`jet-value-${addr}`).textContent = displayValue;
+                    }
+
+                    jetDataState.lastPacketTime = new Date();
+                    updateJetDataStatus();
+                    updateJetDataChart();
+                }
+            } catch (error) {
+                console.error('Jet data fetch error:', error);
+                updateJetDataStatus();
+            }
+        }
+
+        function updateJetDataStatus() {
+            const statusEl = document.getElementById('jetDataStatus');
+            const hasData = Object.keys(jetDataState.registers).length > 0;
+            statusEl.textContent = hasData ? '🟢 online' : '🔴 offline';
+            statusEl.className = `value status-${hasData ? 'online' : 'offline'}`;
+
+            const lastPacket = jetDataState.lastPacketTime 
+                ? jetDataState.lastPacketTime.toLocaleTimeString()
+                : '-';
+            document.getElementById('jetDataLastPacket').textContent = lastPacket;
+        }
+
+        function updateJetDataChart() {
+            if (jetDataState.selectedForChart.size === 0) {
+                return;
+            }
+
+            const datasets = [];
+            const colors = [
+                '#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6',
+                '#1abc9c', '#34495e', '#e67e22', '#c0392b', '#8e44ad'
+            ];
+
+            const maxLength = Math.max(...Array.from(jetDataState.selectedForChart).map(addr => 
+                (jetDataState.chartData[addr] || []).length
+            ), 0);
+
+            const startIdx = Math.max(0, Math.floor(maxLength * (1 - jetDataState.chartRangePercent / 100)));
+            const timestamps = [];
+
+            for (let i = startIdx; i < maxLength; i++) {
+                timestamps.push(i);
+            }
+
+            let colorIdx = 0;
+            jetDataState.selectedForChart.forEach(addr => {
+                const fullData = jetDataState.chartData[addr] || [];
+                const data = fullData.slice(startIdx);
+                const name = jetDataState.registerNames[addr] || `Reg ${addr}`;
+                
+                datasets.push({
+                    label: name,
+                    data: data,
+                    borderColor: colors[colorIdx % colors.length],
+                    backgroundColor: colors[colorIdx % colors.length] + '22',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: false
+                });
+                colorIdx++;
+            });
+
+            jetDataState.jetDataChart.data.labels = timestamps;
+            jetDataState.jetDataChart.data.datasets = datasets;
+            jetDataState.jetDataChart.update('none');
+        }
+
+        function startJetDataMode() {
+            if (!jetDataState.jetDataInterval) {
+                initializeJetDataMode();
+                fetchJetData();
+                jetDataState.jetDataInterval = setInterval(fetchJetData, JET_DATA_REFRESH_INTERVAL);
+            }
+        }
+
+        function stopJetDataMode() {
+            if (jetDataState.jetDataInterval) {
+                clearInterval(jetDataState.jetDataInterval);
+                jetDataState.jetDataInterval = null;
             }
         }
 
@@ -1583,6 +1844,8 @@
         function createRegisterBlock(address) {
             const block = document.createElement('div');
             block.className = 'register-block';
+            const isChecked = debugState.selectedForChart.has(address) ? 'checked' : '';
+            
             block.innerHTML = `
                 <div class="register-header">
                     <span class="register-address">${address}</span>
@@ -1595,7 +1858,7 @@
                         <option value="hex">Hexadecimal</option>
                     </select>
                     <div class="register-chart-checkbox">
-                        <input type="checkbox" id="reg-chart-${address}" data-address="${address}">
+                        <input type="checkbox" id="reg-chart-${address}" data-address="${address}" ${isChecked}>
                         <label for="reg-chart-${address}">Plot Chart</label>
                     </div>
                 </div>
@@ -1665,7 +1928,6 @@
             }
         }
 
-        // ГЛАВНАЯ ФУНКЦИЯ - обновляет статус ТОЛЬКО отсюда
         async function fetchDebugStatus() {
             try {
                 const response = await fetch('jet_api/status', {
@@ -1676,10 +1938,8 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Обновляем статус Modbus в табе Modbus Channels
                     updateModbusStatusFromResponse(data);
 
-                    // Обновляем debug информацию
                     debugState.modbusStatus = data.modbus_status || 'total-offline';
                     debugState.lastPacketTime = new Date();
                     debugState.avgResponseTime = data.avg_response_time_ms || 0;
@@ -1696,6 +1956,20 @@
                 updateModbusStatusFromResponse({ modbus_status: 'total-offline' });
                 updateDebugStatusUI();
             }
+        }
+
+        function updateModbusStatusFromResponse(statusData) {
+            const statusElement = document.getElementById('modbusStatus');
+            const statusMap = {
+                'online': '🟢 Online',
+                'mb-offline': '🟠 Mb-Offline',
+                'total-offline': '🔴 Total-Offline'
+            };
+            
+            const newStatus = statusData.modbus_status || 'total-offline';
+            statusElement.textContent = statusMap[newStatus] || newStatus;
+            statusElement.style.color = newStatus === 'online' ? '#27ae60' : 
+                                       newStatus === 'mb-offline' ? '#f39c12' : '#e74c3c';
         }
 
         function updateDebugStatusUI() {
@@ -1790,7 +2064,6 @@
                     fetchDebugData();
                 }, currentModbusRefreshInterval);
 
-                // Запуск polling статуса раз в секунду - ЕДИНСТВЕННЫЙ ИСТОЧНИК СТАТУСА
                 if (!debugState.statusInterval) {
                     debugState.statusInterval = setInterval(() => {
                         fetchDebugStatus();
@@ -1836,10 +2109,6 @@
                     delete this.dataset.userInteracting;
                 });
             });
-
-            if (activeTab === 'modbus') {
-                startModbusPolling();
-            }
 
             console.log('✅ Initialization complete');
         }
